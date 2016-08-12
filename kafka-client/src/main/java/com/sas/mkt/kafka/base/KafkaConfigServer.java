@@ -8,10 +8,15 @@ import org.apache.kafka.clients.producer.Producer;
 public class KafkaConfigServer {
 	
 	private Properties kp = new Properties();
+	
 	private Producer<String, String> producer;
 	
 	public Producer<String, String> getProducer() {
 		return producer;
+	}
+	
+	public Properties getProducerConfig() {
+		return kp;
 	}
 
 	public KafkaConfigServer() {

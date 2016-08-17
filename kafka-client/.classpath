@@ -1,16 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java">
+	<classpathentry path="src/main/java" kind="src">
 		<attributes>
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src/test/java">
+	<classpathentry path="src/test/java" kind="src">
 		<attributes>
 			<attribute name="FROM_GRADLE_MODEL" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry path="org.eclipse.buildship.core.gradleclasspathcontainer" kind="con"/>
+	<classpathentry path="bin" kind="output"/>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/" kind="con"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.21/139535a69a4239db087de9bab0bee568bf8e0b70/slf4j-api-1.7.21.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.21/f285ac123f201fb4b028bac556928d7cf527ef48/slf4j-api-1.7.21-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.21/72e00d8dc052190c5d0aca77f9a9c5124ec3a1c1/slf4j-api-1.7.21-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/io.confluent/kafka-avro-serializer/2.0.1/b475b7b5b279b075bfce88a45d7943956597c8c5/kafka-avro-serializer-2.0.1.jar" kind="lib"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/0.10.0.0/6b18a4f31c796e5631343377c1c4f0e595131fb0/kafka-clients-0.10.0.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/0.10.0.0/5c942da1fcd924bd79665bfd54193c7c9ef0cdb0/kafka-clients-0.10.0.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/0.10.0.0/8971e6b7f1a5040e80acc9f0ddd886a24a7178ac/kafka-clients-0.10.0.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/0.10.0.0/fe3678a6663b28abb75fb623c840d037161b3f32/kafka-streams-0.10.0.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/0.10.0.0/60be5c49752b332d2397267b3e2eb112a59c2394/kafka-streams-0.10.0.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/0.10.0.0/d1ded05320c719723bf0dc14d5d7986981359617/kafka-streams-0.10.0.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-api/0.10.0.0/9dccf4be1c5c820a4a0ca84d5d9e727ca8c6af81/connect-api-0.10.0.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-api/0.10.0.0/4c2e21cf3873f9be92613fbe7047244534eaee62/connect-api-0.10.0.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-api/0.10.0.0/fd2a8c15f2ddaea42f18acc8805dcb424a17e3ff/connect-api-0.10.0.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/941a8be4506c65f0a9001c08812fb7da1e505e21/junit-4.12-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.avro/avro/1.7.7/3548c0bc136e71006f3fc34e22d34a29e5069e50/avro-1.7.7.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.avro/avro/1.7.7/7d8cd1047bfd01f73c71c10c1467e2242282d574/avro-1.7.7-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.avro/avro/1.7.7/cf3ea0ed32be15e427402e40c8db45e49c5bc29e/avro-1.7.7-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/io.confluent/kafka-schema-registry-client/2.0.1/2034af0ad67f1fac6483b698c95b42aa1c024985/kafka-schema-registry-client-2.0.1.jar" kind="lib"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/io.confluent/common-config/2.0.1/bce7e37f0712695aa6b4ec3c4b36f33e1087fda5/common-config-2.0.1.jar" kind="lib"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/net.jpountz.lz4/lz4/1.3.0/c708bb2590c0652a642236ef45d9f99ff842a2ce/lz4-1.3.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/net.jpountz.lz4/lz4/1.3.0/31debfaa8a55bc4af1d4fe63a8ad0a2a7e851274/lz4-1.3.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/net.jpountz.lz4/lz4/1.3.0/96755fefe7b4b3bb45be91efda186d41d0effbcb/lz4-1.3.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.xerial.snappy/snappy-java/1.1.2.4/40370f7364a63c79d966074e19480ad1c998d1e2/snappy-java-1.1.2.4.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.xerial.snappy/snappy-java/1.1.2.4/810d7ddfd30fec2ae49c93223575c00bf6b4a7b2/snappy-java-1.1.2.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.xerial.snappy/snappy-java/1.1.2.4/c5530e244b37b3a431609781c34c00abfdf86642/snappy-java-1.1.2.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/com.101tec/zkclient/0.8/c0f700a4a3b386279d7d8dd164edecbe836cbfdb/zkclient-0.8.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/com.101tec/zkclient/0.8/9e0eb39e2f1bcd483a7fdb8b7affb12fa11209fa/zkclient-0.8-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/com.101tec/zkclient/0.8/fde959e0d58e7c3f61d2e385a3ad7cb0dccf3136/zkclient-0.8-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-json/0.10.0.0/e62d16e17554245a99825b659c142a6581671f3c/connect-json-0.10.0.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-json/0.10.0.0/c105af2d8a910240d95d64bab2be0038b2dd0c32/connect-json-0.10.0.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.kafka/connect-json/0.10.0.0/1c2513560602a40fafb93ee05a6667b908888254/connect-json-0.10.0.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.21/7238b064d1aba20da2ac03217d700d91e02460fa/slf4j-log4j12-1.7.21.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.21/16b1333786ea93d16bff6fb0f5e3b82716d1b008/slf4j-log4j12-1.7.21-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.21/bd44b1f0c34da545f0495c05f0cf74e2f3231b14/slf4j-log4j12-1.7.21-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.rocksdb/rocksdbjni/4.4.1/e3de3221387f21871d48376df851589d288d51ac/rocksdbjni-4.4.1.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.rocksdb/rocksdbjni/4.4.1/f1edba98dad1e65dd92197de686517e7bcb26117/rocksdbjni-4.4.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.rocksdb/rocksdbjni/4.4.1/910eeb02cd24151f94f317b3fb62aaccfaadbff5/rocksdbjni-4.4.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.6.3/5c4fcae53dd82e2c549b8322d78c6ff47c94c8a8/jackson-databind-2.6.3.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.6.3/e50e2cdcbbfd50346a192b18df3a05cbb0119176/jackson-databind-2.6.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.6.3/4b1645694a0746543744748d524a7e50cfa2d4bc/jackson-databind-2.6.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/ad09811315f1d4f5756986575b0ea16b99cd686f/hamcrest-core-1.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-asl/1.9.13/3c304d70f42f832e0a86d45bd437f692129299a4/jackson-core-asl-1.9.13.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-asl/1.9.13/6ed53c5ce78344e14296aa47769d67b10e1c7b2c/jackson-core-asl-1.9.13-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-asl/1.9.13/cc0384ce60bc2909f71d972ecb472c949941cc0e/jackson-core-asl-1.9.13-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-mapper-asl/1.9.13/1ee2f2bed0e5dd29d1cb155a166e6f8d50bbddb7/jackson-mapper-asl-1.9.13.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-mapper-asl/1.9.13/83113901bc2a377d698ccea35ad842786f37c6ad/jackson-mapper-asl-1.9.13-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-mapper-asl/1.9.13/5978424d457f722f9e47c9a18716b8176ee28d6d/jackson-mapper-asl-1.9.13-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/com.thoughtworks.paranamer/paranamer/2.3/4a85963a752c0a2f715c3924bfc686865e7e1bc6/paranamer-2.3.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/com.thoughtworks.paranamer/paranamer/2.3/9bc5a204dec934bf2fbeb2d2c6fbcd5304a52fc7/paranamer-2.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/com.thoughtworks.paranamer/paranamer/2.3/69a2ba837514d93f38a1c670e6b718543dab0bf7/paranamer-2.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.4.1/b02e84a993d88568417536240e970c4b809126fd/commons-compress-1.4.1.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.4.1/277d39267403965a7a192474794a29bac6760a25/commons-compress-1.4.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.4.1/fcd6caf04a92dc8e4c911e124e6d399efdc26c83/commons-compress-1.4.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/io.confluent/common-utils/2.0.1/4398b7d0aa11f8501964904f1a8ab68c5d1fb063/common-utils-2.0.1.jar" kind="lib"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.zookeeper/zookeeper/3.4.6/1b2502e29da1ebaade2357cd1de35a855fa3755/zookeeper-3.4.6.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.zookeeper/zookeeper/3.4.6/10cb14f3893f8bdcaf4e2619a9a1f6b9cedec6b7/zookeeper-3.4.6-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.apache.zookeeper/zookeeper/3.4.6/32df9a8d55e4fa8b8dd0099fd50d1ed83801d76a/zookeeper-3.4.6-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.0/ecff5cb8b1189514c9d1d8d68eb77ac372e000c9/xz-1.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.0/f95e32a5d2dd8da643c4419814415b9704312993/xz-1.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/org.tukaani/xz/1.0/7e50687c8ac07b2ec23e0e98f4a7dd15d9c0ff97/xz-1.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.6.0/a0990e2e812ac6639b6ce955c91b13228500476e/jackson-annotations-2.6.0.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.6.0/7bcb615d523d88acbc121c92aafeba8d37a83792/jackson-annotations-2.6.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.6.0/9932ce9495cc196f23b40c9935ad42c891bb55db/jackson-annotations-2.6.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.6.3/142ce64dcd709a4b5f6e7d71305a31d3893d077/jackson-core-2.6.3.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.6.3/725bd4a1edfbf519b03ea21967f7fc5270140d3e/jackson-core-2.6.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.6.3/cee2a628fbba3acf6a34c7881aa684b92464baeb/jackson-core-2.6.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/jline/jline/0.9.94/99a18e9a44834afdebc467294e1138364c207402/jline-0.9.94.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/jline/jline/0.9.94/7ac7b49164e4f9d250309c70caee645151b87e46/jline-0.9.94-sources.jar"/>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/io.netty/netty/3.7.0.Final/7a8c35599c68c0bf383df74469aa3e03d9aca87/netty-3.7.0.Final.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/io.netty/netty/3.7.0.Final/92d6795b502e5194f84c5d1fd05c39800413fe53/netty-3.7.0.Final-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/io.netty/netty/3.7.0.Final/588531f6965b9428feb39f427f3afaa8b02daade/netty-3.7.0.Final-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/677abe279b68c5e7490d6d50c6951376238d7d3e/log4j-1.2.17-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/razing/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/c10c20168206896442f3192d5417815df7fcbf9a/log4j-1.2.17-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry path="/Users/razing/.gradle/caches/modules-2/files-2.1/junit/junit/3.8.1/99129f16442844f6a4a11ae22fbbee40b14d774f/junit-3.8.1.jar" kind="lib" sourcepath="/Users/razing/.gradle/caches/modules-2/files-2.1/junit/junit/3.8.1/525753763e53f6f76da052b316d0f2e3bfa4d73/junit-3.8.1-sources.jar"/>
 </classpath>

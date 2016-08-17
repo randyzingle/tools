@@ -7,23 +7,23 @@ import org.apache.kafka.clients.producer.Producer;
 
 public class KafkaConfigServer {
 	
-	private Properties kp = new Properties();
+	private Properties producerProps = new Properties();
+	private Properties consumerProps = new Properties();
 	
-	private Producer<String, String> producer;
-	
-	public Producer<String, String> getProducer() {
-		return producer;
+	public Properties getProducerProperties() {
+		producerProps.put("bootstrap.servers", "kafka0.cidev.sas.us:9092,kafka1.cidev.sas.us:9092,kafka2.cidev.sas.us:9092");
+		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		return producerProps;
 	}
 	
-	public Properties getProducerConfig() {
-		return kp;
+	public Properties getConsumerProperties() {
+		consumerProps.put("bootstrap.servers", "kafka0.cidev.sas.us:9092,kafka1.cidev.sas.us:9092,kafka2.cidev.sas.us:9092");
+		consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		return consumerProps;
 	}
 
 	public KafkaConfigServer() {
-		kp.put("bootstrap.servers", "kafka0.cidev.sas.us:9092,kafka1.cidev.sas.us:9092,kafka2.cidev.sas.us:9092");
-		kp.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		kp.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-		
-		producer = new KafkaProducer<>(kp);
 	}
 }

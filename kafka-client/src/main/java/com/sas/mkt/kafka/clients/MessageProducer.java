@@ -21,7 +21,28 @@ public class MessageProducer {
 	public static void main(String[] args) {
 		MessageProducer sender = new MessageProducer();
 //		sender.sendTestMessages();
-		sender.sendMessageWithCallback();
+//		sender.sendMessageWithCallback();
+		sender.sendMessageToPartitions();
+	}
+
+	private void sendMessageToPartitions() {
+		Properties producerProps = new Properties();
+		producerProps.put("bootstrap.servers", "kafka0.cidev.sas.us:9092,kafka1.cidev.sas.us:9092,kafka2.cidev.sas.us:9092");
+		producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		
+		ProducerRecord<String, String> precord = null;
+		String topic = "four-prt";
+		
+		Producer<String, String> producer = new KafkaProducer<>(producerProps);
+		// send 20 messages to each of the 4 partitions
+		for (int np=0; np<4; np++) {
+			for (int nm=20; nm<30; nm++) {
+				precord = new ProducerRecord<>(topic, np, Integer.toString(np), np + "-hello-" + nm);
+				producer.send(precord);
+			}
+		}
+		producer.close();
 	}
 
 	private void printMetrics(Producer<String, String> producer) {

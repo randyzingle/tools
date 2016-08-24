@@ -13,6 +13,7 @@ apply plugin: 'eclipse'
 
 ext {
 	kafka = '0.10.0.0'
+	avro = '3.0.0'
 }
 
 eclipse {
@@ -36,7 +37,7 @@ repositories {
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'io.confluent:kafka-avro-serializer:2.0.1'
+    compile "io.confluent:kafka-avro-serializer:${avro}"
     compile "org.apache.kafka:kafka-clients:${kafka}"
 	compile "org.apache.kafka:kafka-streams:${kafka}"
 	compile "org.apache.kafka:connect-api:${kafka}"

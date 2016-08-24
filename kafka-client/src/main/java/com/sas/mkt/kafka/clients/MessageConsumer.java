@@ -13,7 +13,6 @@ import com.sas.mkt.kafka.base.KafkaConfigServer;
 public class MessageConsumer {
 	
 	private static Properties props;
-	private static String topic = "int-topic";
 
 	public static void main(String[] args) {
 	     props = new KafkaConfigServer().getConsumerProperties();
@@ -24,12 +23,13 @@ public class MessageConsumer {
 	     props.put("session.timeout.ms", "30000");
 
 		MessageConsumer mc = new MessageConsumer();
-//		mc.getMessages();
-		mc.getMessagesFromPartition();
+		mc.getMessages();
+//		mc.getMessagesFromPartition();
 
 	}
 
 	private void getMessagesFromPartition() {
+		String topic = "four-prt";
 		Properties props = new Properties();
 		props.put("bootstrap.servers", "kafka0.cidev.sas.us:9092");
 		props.put("group.id", "baldur22");
@@ -41,9 +41,9 @@ public class MessageConsumer {
 		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 		// Subscribe to a particular topic AND partition
 		// use assign vs subscribe (you can not mix the two)
-		TopicPartition tp = new TopicPartition(topic, 0);
+		TopicPartition tp = new TopicPartition(topic, 1);
 		consumer.assign(Arrays.asList(tp));
-		consumer.seek(tp, 0);
+		consumer.seek(tp, 0); // this puts you back at the start of the message queue each time
 		System.out.println("assigned consumer to partition: " + tp.toString());
 		while (true) {
 			ConsumerRecords<String, String> records = consumer.poll(100);
@@ -55,9 +55,10 @@ public class MessageConsumer {
 	}
 
 	private void getMessages() {
+		String topic = "four-prt";
 		Properties props = new Properties();
 		props.put("bootstrap.servers", "kafka0.cidev.sas.us:9092");
-		props.put("group.id", "baldurxxx");
+		props.put("group.id", "finnwiz");
 		props.put("enable.auto.commit", "true");
 		props.put("auto.commit.interval.ms", "1000");
 		props.put("session.timeout.ms", "30000");

@@ -1,9 +1,8 @@
-package com.sas.mkt.kafka.clients;
+package com.sas.mkt.kafka.clients.generic;
 
+import java.util.List;
 import java.util.Properties;
 
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -11,15 +10,15 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.SerializationException;
 
-public class GenericAvroProducer {
-	
-	String VALUE_TOPIC = "topicv";
-	String KEY_VALUE_TOPIC = "topickv";
+import com.sas.mkt.kafka.clients.utils.RecordGenerator;
 
+public class ProducerExample {
+	
 	public static void main(String[] args) {
-		GenericAvroProducer gap = new GenericAvroProducer();	
-		gap.sendValueOnlyMessages();
+		ProducerExample pex = new ProducerExample();	
+		pex.sendMessages();
 	}
+
 
 	private Properties getKafkaProducerProps() {
 		Properties props = new Properties();
@@ -27,28 +26,33 @@ public class GenericAvroProducer {
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroSerializer.class);
 		props.put("schema.registry.url", "http://kafka0.cidev.sas.us:8081");
+		props.put("retries", 0);
 		return props;
 	}
-
-	private void sendValueOnlyMessages() {
+	
+	/**
+	 * Send nrecords messages to the topic "page-views" defined by the schema WEBSCHEMA in RecordGenerator.
+	 * The ip address will be used as the key and the full record will be used as the value.
+	 */
+	private void sendMessages() {
+		String topic = "page-views";
 		Properties props = getKafkaProducerProps();
-		Producer producer = new KafkaProducer(props);
-		String userSchema = "{\"type\":\"record\"," +
-                "\"name\":\"userrecord\"," +
-                "\"fields\":[{\"name\":\"f1\",\"type\":\"string\"}]}";
-		Schema.Parser parser = new Schema.Parser();
-		Schema schema = parser.parse(userSchema);
-		GenericRecord avroRecord = new GenericData.Record(schema);
-		for (int i=0; i<5; i++) {
-			avroRecord.put("f1", "value"+i);
-			ProducerRecord<Object, Object> record = new ProducerRecord<>(VALUE_TOPIC, avroRecord);
+		Producer<String, GenericRecord> producer = new KafkaProducer<String, GenericRecord>(props);
+		
+		int nrecords = 5;
+		RecordGenerator rg = new RecordGenerator();
+		List<GenericRecord> recordList = rg.getGenericRecordList(nrecords);
+		for (GenericRecord genericRecord : recordList) {
+			ProducerRecord<String, GenericRecord> record = 
+					new ProducerRecord<>(topic, genericRecord);
+			System.out.println("sent message ...");
 			try {
-				System.out.println("sending message ....");
 				producer.send(record);
 			} catch (SerializationException ex) {
 				ex.printStackTrace();
 			}
 		}
+		
 		producer.close();
 	}
 

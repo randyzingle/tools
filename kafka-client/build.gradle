@@ -9,9 +9,11 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 ext {
-	kafka = '0.10.0.1'
-	confluent = '3.0.0'
+	versions = [:]
 }
+versions.kafka = '0.10.0.1'
+versions.confluent = '3.0.0'
+versions.avro = '1.8.1'
 
 eclipse {
     classpath {
@@ -30,23 +32,23 @@ repositories {
     }
 }
 
-// Source set for avro schema code generation
+// Source set generated Avro schema Java -> want this in build/* so that it doesn't get checked into git
 sourceSets {
     avro {
         java {
-            srcDirs = ['src/main/avro']
+            srcDirs = ['build/generated-main-avro-java']
         }
     }
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile 'org.apache.avro:avro:1.8.1'
+    compile "org.apache.avro:avro:${versions.avro}"
     compile 'org.slf4j:slf4j-api:1.7.21'
-    compile "io.confluent:kafka-avro-serializer:${confluent}"
-    compile "org.apache.kafka:kafka-clients:${kafka}"
-	compile "org.apache.kafka:kafka-streams:${kafka}"
-	compile "org.apache.kafka:connect-api:${kafka}"
+    compile "io.confluent:kafka-avro-serializer:${versions.confluent}"
+    compile "org.apache.kafka:kafka-clients:${versions.kafka}"
+	compile "org.apache.kafka:kafka-streams:${versions.kafka}"
+	compile "org.apache.kafka:connect-api:${versions.kafka}"
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the

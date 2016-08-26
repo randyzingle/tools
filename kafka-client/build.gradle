@@ -2,14 +2,14 @@
 plugins {
     id "com.commercehub.gradle.plugin.avro" version "0.9.0"
 }
-apply plugin: "com.commercehub.gradle.plugin.avro"
+
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
 ext {
-	kafka = '0.10.0.0'
+	kafka = '0.10.0.1'
 	confluent = '3.0.0'
 }
 

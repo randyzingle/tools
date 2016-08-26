@@ -3,7 +3,6 @@ package com.sas.mkt.kafka.clients.specific;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;

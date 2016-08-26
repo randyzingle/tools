@@ -1,0 +1,24 @@
+{
+  "namespace": "com.sas.mkt.kafka.domain",
+  "type": "record",
+  "name": "WebEvent",
+  "fields": [
+    {
+      "name": "time",
+      "type": "long"
+    },
+    {
+      "name": "site",
+      "type": "string"
+    },
+    {
+      "name": "ip",
+      "type": "string"
+    },
+    {
+      "name": "tenant",
+      "type": "string",
+      "default": "ollivanders"
+    }
+  ]
+}

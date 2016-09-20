@@ -32,10 +32,10 @@ repositories {
     }
 }
 
-// Source set generated Avro schema Java -> want this in build/* so that it doesn't get checked into git
 sourceSets {
     avro {
         java {
+            // Source set generated Avro schema Java -> want this in build/* so that it doesn't get checked into git
             srcDirs = ['build/generated-main-avro-java']
         }
     }

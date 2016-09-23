@@ -1,0 +1,38 @@
+<html>
+<head>
+<style>
+body{
+	background: #000;
+}
+
+@keyframes colorchange {
+	from {color: #fff;}
+	
+	to {color: #000;}
+}
+
+#banner{
+    background: #000;
+    padding: 10px;
+    color: white;
+    margin: 100px auto;
+    text-align: center;
+    width: 50%;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 3.5em;
+    animation-name: colorchange;
+    animation-duration: 4s;
+    animation-delay: 4s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in;
+}
+</style>
+</head>
+<body>
+<div id="banner">
+	<p>Now You've Done It!</p>
+	<p>Why did you think we had this link?</p>
+	<p th:text="${path}"></p>
+</div>
+</body>
+</html>

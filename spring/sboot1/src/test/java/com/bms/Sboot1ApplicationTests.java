@@ -1,33 +1,46 @@
 package com.bms;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.bms.properties.AmazonProperties;
 
 /*
  * Unit tests can be written as normal JUnit tests. Integration tests will have to understand and load
  * some form of the Spring application context. 
  * 
- * In a typical Spring integration test, you'd annotate the test class with @ContextConfiguration to
- * specify how the tests should load the Spring application context. 
- * 
- * The @SpringApplicationConfiguration annotation loads the context in a spring boot way from the
- * Sboot1Application configuration class. 
- * 
- * The SpringJUnit4ClassRunner helps load a Spring application context in JUnit-based application tests
- * and enables autowiring of beans into the test class. 
- */
+*/
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes=Sboot1Application.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT) // bootstrap w SpringBoot, load application.properties
 public class Sboot1ApplicationTests {
 
 	// this will pass if the application context loads
 	@Test
 	public void contextLoads() {
 	}
+	
+	// check to see what's in the app context
+	@Autowired
+	private AmazonProperties amazonProperties;
+	
+	@Test
+	public void testAmazonProperties() {
+		assertEquals("baldur1", amazonProperties.getAmazonID());
+		assertEquals("secretstuff", amazonProperties.getPassword());
+		assertEquals("www.amazon.com", amazonProperties.getUrl());
+	}
+	
+
+	
 
 }

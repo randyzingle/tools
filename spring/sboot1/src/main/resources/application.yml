@@ -2,7 +2,7 @@
 
 # context root for actuator endpoints
 management:
-  context-path: /mgmt
+  context-path: /commons
 ---
 ##############################################################################
 # Development

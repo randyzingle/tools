@@ -28,19 +28,21 @@ jar {
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework:spring-web")
-    compile("com.fasterxml.jackson.core:jackson-databind")
-    testCompile("junit:junit")
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+ 
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    
+    runtime('com.h2database:h2')
 }
 
 task wrapper(type: Wrapper) {

@@ -37,7 +37,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-devtools")
 	
 	// liquibase for database DDL
-	compile("org.liquibase:liquibase-core")
+	//compile("org.liquibase:liquibase-core")
 	
 	compile 'org.springframework.boot:spring-boot-starter-actuator'
 	

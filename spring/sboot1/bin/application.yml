@@ -1,5 +1,9 @@
 # Shared Configuration for Development and Production
 
+spring:
+  profiles:
+    active: development
+
 # context root for actuator endpoints
 management:
   context-path: /commons

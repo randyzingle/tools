@@ -1,0 +1,18 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "Event",
+ "fields": [
+     {"name": "date", "type": "com.sas.mkt.kafka.domain.events.DateTime"},
+     {"name": "tenant_id", "type": "string", "default": ""},
+     {"name": "vid", "type": "string", "default": ""},
+     {"name": "session_id", "type": "string", "default": ""},
+     {"name": "channel_type", "type": "string", "default": ""},
+     {"name": "product", "type" : "com.sas.mkt.kafka.domain.events.Product"},
+     {"name": "page_details","type":"com.sas.mkt.kafka.domain.events.Page"},
+     {"name": "location","type":"com.sas.mkt.kafka.domain.events.location"},
+     {"name": "browser","type":"com.sas.mkt.kafka.domain.events.Browser"},
+     {"name": "cart","type":"com.sas.mkt.kafka.domain.events.Cart"},
+     {"name": "properties", "type": {"type" : "map", "values" : "string"}}
+
+ ]
+}

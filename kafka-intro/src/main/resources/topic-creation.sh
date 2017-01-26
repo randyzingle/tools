@@ -1,0 +1,2 @@
+/install/citng/kafka/bin/kafka-topics --create --zookeeper {ZOOKEEPER-DNS}:2181/kafka --replication-factor 1 --partitions 20 --topic email-customer-notifications
+/install/citng/kafka/bin/kafka-topics --create --zookeeper {ZOOKEEPER-DNS}:2181/kafka --replication-factor 1 --partitions 20 --topic on-prem-notifications

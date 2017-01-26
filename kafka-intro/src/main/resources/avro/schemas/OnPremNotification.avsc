@@ -1,0 +1,9 @@
+{"namespace": "com.sas.mkt.kafka.domain",
+ "type": "record",
+ "name": "OnPremNotification",
+ "fields": [
+     {"name": "tenantId", "type": "string"},
+     {"name": "eventType",  "type": "string"},
+     {"name": "eventId", "type": "string"}
+ ]
+}

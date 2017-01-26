@@ -1,0 +1,29 @@
+{
+  "namespace": "com.sas.mkt.kafka.domain",
+  "type": "record",
+  "name": "TestEvent",
+  "fields": [
+    {
+      "name": "time",
+      "type": "long"
+    },
+    {
+      "name": "site",
+      "type": "string"
+    },
+    {
+      "name": "ip",
+      "type": "string"
+    },
+    {
+      "name": "tenant",
+      "type": "string",
+      "default": "ollivanders"
+    },
+    {
+      "name": "sequence",
+      "type": "int",
+      "default": -1
+    }
+  ]
+}

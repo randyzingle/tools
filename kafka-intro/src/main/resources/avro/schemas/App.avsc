@@ -1,0 +1,14 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "App",
+ "fields": [
+
+     {"name": "channel", "type": "string"},
+     {"name": "sdk_name", "type": "string"},
+     {"name": "name", "type": "string"},
+     {"name": "sdk_version", "type": "string"},
+     {"name": "version", "type": "string"},
+     {"name": "id", "type": "string"}
+
+ ]
+}

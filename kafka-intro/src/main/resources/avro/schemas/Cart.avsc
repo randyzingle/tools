@@ -1,0 +1,36 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "Cart",
+ "fields": [
+     {"name": "id", "type": "string"},
+     {"name": "store_id", "type": "string"},
+     {"name": "tax", "type": "string"},
+     {"name": "total_value", "type": "string"},
+     {"name": "delivery_type", "type": "string"},
+     {"name": "payment_type", "type": "string"},
+     {"name": "currency", "type": "string"},
+     {"name": "promo_code", "type": "string"},
+     {"name": "billing_address","type":"com.sas.mkt.kafka.domain.events.location"},
+     {"name": "shipping_address","type":"com.sas.mkt.kafka.domain.events.location"},
+     {"name": "cart_items",
+       "type":{
+         "type": "array",
+            "items":{
+              "type": "record",
+              "name": "CartItem",
+              "fields": [
+                  {"name": "id", "type": "string"},
+                  {"name":"product", "type":"com.sas.mkt.kafka.domain.events.Product"},
+                  {"name": "price", "type": "string"},
+                  {"name": "rating", "type": {"type": "bytes","logicalType": "decimal","precision": 4,"scale": 2}},
+                  {"name": "promo_code", "type": "string"},
+                  {"name": "total_discount", "type": {"type": "bytes","logicalType": "decimal","precision": 4,"scale": 2}},
+                  {"name": "availability_msg", "type": "string"},
+                  {"name": "shipping_msg", "type": "string"}
+              ]
+              }
+            }
+          },
+     {"name": "cart_shipping", "type": {"type": "bytes","logicalType": "decimal","precision": 4,"scale": 2}}
+ ]
+}

@@ -1,0 +1,21 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "RawEvent",
+ "fields": [
+     {"name": "eventName", "type": "string"},
+     {"name": "queuedTime", "type": "long"},
+     {"name": "accountId", "type": "string"},
+     {"name": "tenant_id", "type": ["string", "null"]},
+     {"name": "visitorId", "type": "string"},
+     {"name": "session_id", "type": "string"},
+     {"name": "tracer", "type": "boolean"},
+     {"name": "newSessionEvent", "type": "boolean"},
+     {"name": "adsDeliveredEvent", "type": "boolean"},
+     {"name": "clickAdsEvent", "type": "boolean"},
+     {"name": "tracerId", "type": "string"},
+     {"name": "domain", "type": "string"},
+     {"name": "hdfsString", "type": "string"},
+     {"name": "properties", "type": {"type" : "map", "values" : "string"}}
+
+ ]
+}

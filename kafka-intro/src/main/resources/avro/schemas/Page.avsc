@@ -1,0 +1,15 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "Page",
+ "fields": [
+     {"name": "load_id", "type": "string"},
+     {"name": "url", "type": "string"},
+     {"name": "previous_page", "type": "string"},
+     {"name": "category", "type":{"type": "array", "items": "string"}},
+     {"name": "name", "type": "string"},
+     {"name": "view_sequence", "type": "string"},
+     {"name": "availability_msg", "type": "string"},
+     {"name": "shipping_msg", "type": "string"}
+
+ ]
+}

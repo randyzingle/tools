@@ -1,0 +1,13 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "location",
+ "fields": [
+     {"name": "city", "type": "string"},
+     {"name": "country", "type": "string"},
+     {"name": "region", "type": "string"},
+     {"name": "zipcode", "type": "string"},
+     {"name": "metro", "type": "string"},
+     {"name": "timezone", "type": "string"},
+     {"name": "ip", "type": "string"}
+ ]
+}

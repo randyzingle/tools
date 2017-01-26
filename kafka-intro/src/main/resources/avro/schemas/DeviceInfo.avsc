@@ -1,0 +1,11 @@
+{"namespace": "com.sas.mkt.kafka.domain.events",
+ "type": "record",
+ "name": "DeviceInfo",
+ "fields": [
+     {"name": "type", "type": "string"},
+     {"name": "id", "type": "string"},
+     {"name": "version", "type": "string"},
+     {"name": "os", "type": "string"}
+
+ ]
+}

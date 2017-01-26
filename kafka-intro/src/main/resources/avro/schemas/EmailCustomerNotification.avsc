@@ -1,0 +1,11 @@
+{"namespace": "com.sas.mkt.kafka.domain",
+ "type": "record",
+ "name": "EmailCustomerNotification",
+ "fields": [
+     {"name": "tenantId", "type": "string"},
+     {"name": "identityType",  "type": "string"},
+     {"name": "identityId", "type": "string"},
+     {"name": "preferenceType", "type": "string"},
+     {"name": "preferenceValue",  "type": "boolean"}
+ ]
+}

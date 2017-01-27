@@ -34,6 +34,6 @@ print(mytext2)
 print(tsize)
 print(mytext2[0]) # first character
 print(mytext2[-1]) # - means count back from end so -1 is last character
-print(mytext2[3:tsize]) # position 3 (included) to tsize (excluded)
+print(mytext2[3:tsize]) # position 3 (included) to tsize (excluded) -> called slicing or substring
 print(mytext2[3:]) # positon 3 to the end
-print(mytext2[:5]) # start to 5
+print(mytext2[:5]) # start to 5(excluded)

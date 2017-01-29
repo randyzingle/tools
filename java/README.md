@@ -35,4 +35,28 @@ run gradle eclipse
 you'll get the .project files for the base folder and subprojects
 you'll get the .classpath files for each subproject with the src/* folders in classpath
 
+Two important objects available in a gradle build:
+project -> system being built
+task -> encapsulates a piece of build logic
+
+for multi-project builds a Project instance is created for the root project and for each child project (for each build.gradle)
+
+methods in the build without object references are invoked on the project object
+
+the task objects are created for each task declared in the build file & in plugins
+
+note some tasks are available in all projects like
+help
+tasks
+
+gradle lifecycle:
+- initialization
+- configuration
+- execution
+
+gradle lifecycle callbacks
+for example, there is an evaluation phase run during Configuration, and Project has the following hooks:
+- beforeEvaluate
+- afterEvaluate
+
 

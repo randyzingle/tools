@@ -22,3 +22,11 @@ dependencies {
 
 }
 
+task baldur {
+    doLast() {
+        println 'baldur is the best'
+    }
+}
+
+// gradle lifecycle callbacks
+// project has beforeEva

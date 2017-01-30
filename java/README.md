@@ -59,4 +59,14 @@ for example, there is an evaluation phase run during Configuration, and Project 
 - beforeEvaluate
 - afterEvaluate
 
+you can define 'extra' properties through the ext namespace
+project.ext.prop1 = "foo"
+
+project.version (or just version) will be used by tasks such as Jar to include a version number in the produced artifact
+
+gradle ships with many custom tasks types built in
+Copy, Exec, Delete, Jar, Synch, Test, JavaCompile, Zip, ...
+
+gradle built in task: uploadArchive, customized with archives configuration
+
 

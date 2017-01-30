@@ -11,13 +11,25 @@ apply plugin: 'base'
 // Eclipse support
 apply plugin: 'eclipse'
 
+// set the verison (for this and all subprojects)
+allprojects {
+    version = '0.1.0'
+}
+
+// set some extra properties
+ext.p1 = 'property 1'
+
 // In this section you declare where to find the dependencies of your project
+// note this is actually project.repositories: 
+// https://docs.gradle.org/current/javadoc/index.html?org/gradle/api/Project.html
 repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
 
+// jars to pull in
+// note this is actually project.dependencies
 dependencies {
 
 }
@@ -28,5 +40,22 @@ task baldur {
     }
 }
 
-// gradle lifecycle callbacks
-// project has beforeEva
+// note brackets are optional on doFirst/Last
+// always run baldur task first
+task pinfo(dependsOn: baldur) {
+    doFirst {
+        println 'first'
+        println "project name: ${project.name}"
+        println "project version: ${project.version}"
+        println p1
+    }
+    
+    doLast {
+        println 'last'
+    }
+}
+
+
+
+
+

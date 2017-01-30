@@ -30,3 +30,57 @@ dependencies {
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
+
+// 'extend' builtin gradle task
+// can call this from the root project with: gradlew base:copyPoem
+task copyPoem(type:Copy) {
+    from file("src/main/resources/xanadu.txt")
+    into file("${buildDir}/docs")
+}
+
+// we'll upload only specific files when we call built-in uploadArchives
+
+FileTree tree = fileTree("${rootDir}/base/src/main/java") {
+    include '**/*.java'
+    exclude '**/com/bms/notme'
+}
+
+// specify files
+task customJar(type: Jar) {
+    from tree
+}
+
+// customize the uploadArtifacts config
+artifacts {
+    archives customJar
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Baldurite',
+                   'Implementation-Version': version,
+                   'Main-Class': 'com.bms.base.MainApplication'
+    }
+    onlyIf{true}
+}
+
+task list {
+    doLast {
+        tree.each {File file ->
+            println file
+        }
+    }
+}
+
+// customize the repo we upload to (use file repo)
+uploadArchives {
+    repositories {
+        flatDir {dirs "${rootDir}/tempRepo"}
+    }
+}
+
+clean {
+        println "deleting ${rootDir}/tempRepo"
+        file("${rootDir}/tempRepo").deleteDir()
+}
+

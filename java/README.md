@@ -69,4 +69,15 @@ Copy, Exec, Delete, Jar, Synch, Test, JavaCompile, Zip, ...
 
 gradle built in task: uploadArchive, customized with archives configuration
 
+you can call subproject tasks directly two ways:
+
+gradle base:list
+gradle -p base list
+
+check out dependencies:
+gradlew -q dependencies base:dependencies
+
+list project properties
+gradlew -q base:properties
+
 

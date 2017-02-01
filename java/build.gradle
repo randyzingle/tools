@@ -11,6 +11,11 @@ apply plugin: 'base'
 // Eclipse support
 apply plugin: 'eclipse'
 
+// set the wrapper version to lock it in
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
+
 // set the verison (for this and all subprojects)
 allprojects {
     version = '0.1.0'

@@ -6,6 +6,8 @@
  * user guide available at https://docs.gradle.org/3.3/userguide/tutorial_java_projects.html
  */
 
+description = 'Java Basics & Fundamentals'
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 // this will give us the 'gradle run' task which will call the given class with the given args
@@ -45,16 +47,6 @@ FileTree tree = fileTree("${rootDir}/base/src/main/java") {
     exclude '**/com/bms/notme'
 }
 
-// specify files
-task customJar(type: Jar) {
-    from tree
-}
-
-// customize the uploadArtifacts config
-artifacts {
-    archives customJar
-}
-
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Baldurite',
@@ -72,15 +64,25 @@ task list {
     }
 }
 
+task baldur {
+    description = 'Root of the PC heirarchy'
+    doFirst {println "baldur task"}
+}
+
+task finnr(dependsOn: baldur) {
+    doFirst {println "finnr task"}
+}
+
+task aldir(dependsOn: finnr) {
+    doFirst {println "aldir task"}
+}
+
+
+
 // customize the repo we upload to (use file repo)
 uploadArchives {
     repositories {
         flatDir {dirs "${rootDir}/tempRepo"}
     }
-}
-
-clean {
-        println "deleting ${rootDir}/tempRepo"
-        file("${rootDir}/tempRepo").deleteDir()
 }
 

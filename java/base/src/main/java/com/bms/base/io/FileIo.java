@@ -11,7 +11,7 @@ public class FileIo {
 	public static void main(String[] args) {
 		System.out.println("Firing up FileIo");
 		FileIo fio = new FileIo();
-//		fio.readWriteColeridgeAsBytes();
+		fio.readWriteColeridgeAsBytes();
 		fio.readOneByteAtATime();
 	}
 

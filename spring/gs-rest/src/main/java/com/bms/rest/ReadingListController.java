@@ -6,7 +6,6 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bms.domain.Book;
 import com.bms.domain.BookRepository;
 
+/**
+ * @RestController is equivalent to:
+ * @Controller - a @Component which is a web controller
+ * @ResponseBody - indicates that method return values should be bound to the web response body (can also be added at the method level)
+ * 
+ * @author razing
+ *
+ */
 @RestController
 @RequestMapping("/books")
 public class ReadingListController {
@@ -53,6 +60,12 @@ public class ReadingListController {
 		return new ResponseEntity<Book>(book, HttpStatus.OK);
 	}
 	
+	/**
+	 * @RequestBody binds the request body to the given object, with spring providing the parsing/transformation
+	 * @param reader
+	 * @param book
+	 * @return
+	 */
 	@RequestMapping(value="/{reader}", method=RequestMethod.POST)
 	public Book addToBookList(@PathVariable("reader") String reader, @RequestBody Book book) {
 		book.setReader(reader);

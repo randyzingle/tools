@@ -1,0 +1,66 @@
+# provided by Tethys microservice template
+temp*/
+
+# Compiled source #
+###################
+*.a
+*.bin
+*.class
+*.com
+*.dll
+*.exe
+*jar.
+*.gz
+*.o
+*.pyc
+*.pyo
+*.sa
+*.so
+*.tar
+*.tgz
+*.zip
+*.out
+
+# Logs and databases #
+######################
+*.log
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Cruft & Swarf #
+#################
+*.bak
+*.diff
+*.iml
+*.ipr
+*.iws
+*.patch
+*.swp
+*~
+
+.classpath
+.gradle
+.idea
+.metadata
+.project
+.settings
+/.settings/
+/.classpath
+/.project
+/target/
+target
+build
+docker
+gradle-local.properties
+lib-ext
+gradle-work
+gradle-app.setting
+logs

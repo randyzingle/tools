@@ -28,6 +28,9 @@ repositories {
 dependencies {
     // The production code uses Guava
     compile 'com.google.guava:guava:20.0'
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+	compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
+    
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

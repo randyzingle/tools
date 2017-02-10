@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ListFilter {
 	
-	private final String fileName = "src/main/resources/xanadu.txt";
+	private final String fileName = "src/main/resources/books/doriangrey.txt";
 
 	public static void main(String[] args) {
 		ListFilter lf = new ListFilter();

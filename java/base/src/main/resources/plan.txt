@@ -1,0 +1,60 @@
+
+Books
+=====
+Pro Java 8 Programming
+
+Java 8 Lambdas
+
+Java Generics and Collections
+
+Java Network Programming 
+
+Algorithms 4th Edition
+
+Java Tutorial
+=============
+Essentials:
+Basic I/O
+Concurrency
+Platform Environment
+Regular Expressions
+
+Collections:
+Date-Time APIs
+
+Custom Networking:
+Generics:
+JMX:
+Reflection:
+Security:
+
+Jackson
+=======
+https://github.com/FasterXML/jackson-databind
+
+Spring and Spring Boot
+======================
+Spring Boot in Action
+
+Spring Essentials
+
+Spring Security Essentials
+
+Spring Boot Cookbook
+
+Building A Restful Web Service with Spring
+
+Mockito for Spring 
+
+Mastering Spring Application Development
+
+Learning Spring Boot
+
+Big Data & Others
+=================
+
+Cloudera Administration Handbook
+
+Gradle Beyond the Basics
+
+Learning Spark

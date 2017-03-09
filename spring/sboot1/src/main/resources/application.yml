@@ -1,4 +1,6 @@
+##############################################################################
 # Shared Configuration for Development and Production
+##############################################################################
 
 spring:
   profiles:
@@ -7,6 +9,19 @@ spring:
 # context root for actuator endpoints
 management:
   context-path: /commons
+  
+# Kafka Stuff
+kafka:
+  cluster: 10.240.25.26:19092,10.240.25.29:19092
+  schema-registry: http://10.240.28.237:8081
+  ssl-required: true
+  client-auth-required: true
+  connect-distributed: 10.240.25.26:8085,10.240.25.29:8085
+  certificate-store-rootname: dev
+  keystore-store-password: Go4thsas
+  keystore-key-password: Go4thsas
+  truststore-store-password: Go4thsas
+  
 ---
 ##############################################################################
 # Development

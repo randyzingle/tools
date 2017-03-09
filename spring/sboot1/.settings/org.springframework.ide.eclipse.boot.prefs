@@ -1,2 +1,2 @@
 eclipse.preferences.version=1
-spring.boot.launch.profile.history=development;production;
+spring.boot.launch.profile.history=production;development;

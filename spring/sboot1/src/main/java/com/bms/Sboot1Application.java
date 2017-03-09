@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import com.bms.properties.KafkaProperties;
 import com.bms.simple.SimpleClient;
 
 @SpringBootApplication
@@ -20,11 +21,15 @@ public class Sboot1Application {
 		if (s != null) {
 			System.out.println("Found Keystore Path: " + s);
 		}
+		KafkaProperties kp = ctx.getBean(KafkaProperties.class);
+		System.out.println("Cluster: " + kp.getCluster());
+		System.out.println("SSL: " + kp.isSslRequired());
+		System.out.println("Not here: " + kp.getImNotHere());
 		Sboot1Application sa = new Sboot1Application();
 		sa.loadfile();
 	}
 	
-	private void loadfile() {		
+	private void loadfile() {	
 		Runtime.getRuntime().exit(0);
 	}
 	

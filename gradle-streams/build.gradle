@@ -1,0 +1,63 @@
+plugins {
+    id "com.commercehub.gradle.plugin.avro-base" version "0.9.0"
+}
+
+apply plugin: 'java'
+//apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+group = 'io.confluent'
+version = '3.2.0'
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+repositories {        
+     maven { url "http://packages.confluent.io/maven/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+     maven { url "https://plugins.gradle.org/m2/"}
+}
+
+avro {
+    fieldVisibility = "PRIVATE"
+    outputCharacterEncoding = "UTF-8"
+}
+
+task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
+    source("src/main/resources/avro")
+    outputDir = file("dest/avro")
+}
+
+compileJava.source(generateAvro.outputs)
+
+dependencies {
+    compile group: 'io.confluent', name: 'kafka-avro-serializer', version:'3.2.0'
+    compile group: 'io.confluent', name: 'kafka-schema-registry-client', version:'3.2.0'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version:'0.10.2.0-cp1'
+    compile group: 'org.apache.kafka', name: 'kafka-streams', version:'0.10.2.0-cp1'
+    compile group: 'org.apache.avro', name: 'avro', version:'1.8.1'
+
+    compile group: 'org.scala-lang', name: 'scala-library', version:'2.11.8'
+    compile group: 'com.101tec', name: 'zkclient', version:'0.9'
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.0.1'
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version:'9.2.12.v20150709'
+    compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version:'9.2.12.v20150709'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version:'2.19'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version:'2.19'
+    compile group: 'org.scalactic', name: 'scalactic_2.11', version:'2.2.6'
+
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'org.assertj', name: 'assertj-core', version:'3.3.0'
+    testCompile group: 'org.apache.kafka', name: 'kafka_2.11', version:'0.10.2.0-cp1'
+    testCompile group: 'org.apache.kafka', name: 'kafka_2.11', version:'0.10.2.0-cp1', classifier:'test'
+    testCompile group: 'org.apache.kafka', name: 'kafka-clients', version:'0.10.2.0-cp1', classifier:'test'
+    testCompile group: 'org.apache.curator', name: 'curator-test', version:'2.9.0'
+    testCompile group: 'io.confluent', name: 'kafka-schema-registry', version:'3.2.0'
+    testCompile group: 'io.confluent', name: 'kafka-schema-registry', version:'3.2.0', classifier:'tests'
+    testCompile group: 'org.scalatest', name: 'scalatest_2.11', version:'2.2.6'
+}

@@ -45,6 +45,11 @@ public class ContextRefreshedListener implements ApplicationListener<ContextRefr
 
 	}
 	
+	public void doIt() {
+		System.out.println("Downloading keystores from S3...");
+		downloadS3Keystores();
+	}
+	
 	private void downloadS3Keystores() {
 		String outPath = pathHolderBean.getKeystorePath();
 		AmazonS3 client = AmazonS3ClientBuilder.defaultClient();

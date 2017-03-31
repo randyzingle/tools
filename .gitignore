@@ -64,3 +64,4 @@ lib-ext
 gradle-work
 gradle-app.setting
 logs
+/bin/

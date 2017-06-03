@@ -21,6 +21,45 @@ allprojects {
     version = '0.1.0'
 }
 
+allprojects {
+    task hello {
+        doLast { boo ->
+            println "I'm project $boo.project.name"
+        }
+    }
+}
+
+subprojects { subproject ->
+    if (subproject.name.startsWith("mult")) {
+        println "****Multiproject****"
+    }
+}
+
+subprojects {
+    hello {
+        doLast {
+            println "- I am a subproject"
+        }
+        afterEvaluate {Project project ->
+            println "evaluating $project.name"
+            if (project.hasProperty('pluginproject') && project.pluginproject) {
+                println "--- this is a plugin project"
+            }
+        }
+    }
+}
+
+project('multi:multi1').hello {
+    doLast {
+        println "-- sub-sub-project"
+    }
+}
+project('multi:multi2').hello {
+    doLast {
+        println "-- sub-sub-project"
+    }
+}
+
 // set some extra properties
 ext.p1 = 'property 1'
 

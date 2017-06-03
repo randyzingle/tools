@@ -12,8 +12,10 @@ public class Sboot1Application {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(Sboot1Application.class, args);
-//		PathHolderBean phb = ctx.getBean(PathHolderBean.class);
-		SimpleClient phb = new SimpleClient();
+		ContextRefreshedListener crl = ctx.getBean(ContextRefreshedListener.class);
+		crl.doIt();
+		PathHolderBean phb = ctx.getBean(PathHolderBean.class);
+//		SimpleClient phb = new SimpleClient();
 		System.out.println("FROM PATHHOLDER - jarPath: " + phb.getJarPath());
 		System.out.println("FROM PATHHOLDER - homeDir: " + phb.getHomeDir());
 		System.out.println("FROM PATHHOLDER - userDir: " + phb.getUserDir());
@@ -22,9 +24,8 @@ public class Sboot1Application {
 			System.out.println("Found Keystore Path: " + s);
 		}
 		KafkaProperties kp = ctx.getBean(KafkaProperties.class);
-		System.out.println("Cluster: " + kp.getCluster());
-		System.out.println("SSL: " + kp.isSslRequired());
-		System.out.println("Not here: " + kp.getImNotHere());
+		System.out.println(kp.toString());
+		System.out.println(kp.getKafkaProperties().toString());
 		Sboot1Application sa = new Sboot1Application();
 		sa.loadfile();
 	}

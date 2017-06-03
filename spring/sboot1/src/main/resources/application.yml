@@ -21,6 +21,7 @@ kafka:
   keystore-store-password: Go4thsas
   keystore-key-password: Go4thsas
   truststore-store-password: Go4thsas
+  s3-store-path: ci-360-deployment-dev-us-east-1/shared/kafka/keys
   
 ---
 ##############################################################################

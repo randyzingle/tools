@@ -80,4 +80,30 @@ gradlew -q dependencies base:dependencies
 list project properties
 gradlew -q base:properties
 
+run build without test:
+gradlew build -x test
 
+list all projects:
+gradlew projects
+
+list all tasks:
+gradlew base:tasks (will only show tasks belonging to a group)
+tasks --all will show all tasks
+
+show details for a dependency:
+gradlew base:dependencyInsight --configuration compile --dependency guava
+
+show available properties in a project:
+gradlew -q base:properties
+
+note one of the properties is the dependency cache:
+dependencyCacheDir: /home/rzingle/work/projects/tools/java/base/build/dependency-cache
+
+Terminology
+dependencies -things that are needed BY our project
+these are grouped into configurations
+The java plugin defines a number of standard configurations
+- compile
+- runtime
+- testCompile
+- testRuntime

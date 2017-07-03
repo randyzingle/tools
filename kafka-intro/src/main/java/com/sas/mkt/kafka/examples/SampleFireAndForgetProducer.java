@@ -8,14 +8,14 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.SerializationException;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import com.sas.mkt.kafka.clients.utils.KafkaUtilityService;
 import com.sas.mkt.kafka.clients.utils.TestRecordGenerator;
 import com.sas.mkt.kafka.domain.TestEvent;
 
 public class SampleFireAndForgetProducer {
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private String topic = "test-baldur1";
 	private String clientID = "baldur1";

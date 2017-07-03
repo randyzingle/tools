@@ -4,7 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,7 +20,7 @@ import com.esotericsoftware.minlog.Log;
 
 @Component
 public class ContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent> {
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	// READ these in as properties
 	String bucketName = "ci-360-deployment-dev-us-east-1";

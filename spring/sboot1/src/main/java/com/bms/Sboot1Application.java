@@ -11,23 +11,17 @@ import com.bms.simple.SimpleClient;
 public class Sboot1Application {
 
 	public static void main(String[] args) {
+		/*
+		 * Get the ApplicationContext for the app. You can use this to get:
+		 * - Beans
+		 * - Messages
+		 * - Environment
+		 * - Resources
+		 */
 		ConfigurableApplicationContext ctx = SpringApplication.run(Sboot1Application.class, args);
+		System.out.println(ctx.toString());
 		ContextRefreshedListener crl = ctx.getBean(ContextRefreshedListener.class);
-		crl.doIt();
-		PathHolderBean phb = ctx.getBean(PathHolderBean.class);
-//		SimpleClient phb = new SimpleClient();
-		System.out.println("FROM PATHHOLDER - jarPath: " + phb.getJarPath());
-		System.out.println("FROM PATHHOLDER - homeDir: " + phb.getHomeDir());
-		System.out.println("FROM PATHHOLDER - userDir: " + phb.getUserDir());
-		String s = phb.getKeystorePath();
-		if (s != null) {
-			System.out.println("Found Keystore Path: " + s);
-		}
-		KafkaProperties kp = ctx.getBean(KafkaProperties.class);
-		System.out.println(kp.toString());
-		System.out.println(kp.getKafkaProperties().toString());
-		Sboot1Application sa = new Sboot1Application();
-		sa.loadfile();
+		//sa.loadfile();
 	}
 	
 	private void loadfile() {	

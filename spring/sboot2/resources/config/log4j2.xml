@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <Configuration>
+      <Appenders>
+        <File name="fileAppender" fileName="${log4j:configParentLocation}/../logs/sas.mkt.apigw.sdk.log" append="false">
+          <PatternLayout pattern="%d{ISO8601} %-5p %-20.20t %-40.40c - %m%n"/>
+        </File>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+          <PatternLayout pattern="%d{ISO8601} %-5p %-20.20t %-40.40c - %m%n"/>
+	  <ThresholdFilter level="fatal"/>
+        </Console>
+      </Appenders>
+      <Loggers>
+        <Logger name="com.sas" level="info"  additivity="false">
+          <AppenderRef ref="consoleAppender"/>
+          <AppenderRef ref="fileAppender"/>
+        </Logger>
+        <Root level="error">
+          <AppenderRef ref="fileAppender"/>
+          <AppenderRef ref="consoleAppender"/>
+        </Root>
+      </Loggers>
+  </Configuration>

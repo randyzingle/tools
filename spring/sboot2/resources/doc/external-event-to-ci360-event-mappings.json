@@ -1,0 +1,13 @@
+{
+	"externalEventStreams": [
+		{
+			"eventName": "extEvent1",
+			"applicationId" : "externalApp1",
+			"identityField" : "subject_id"
+		}, {
+			"eventName": "extEvent2",
+			"applicationId" : "externalApp2",
+			"identityField" : "customer_id"
+		}
+	]
+}

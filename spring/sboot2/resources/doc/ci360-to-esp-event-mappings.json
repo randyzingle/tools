@@ -1,0 +1,29 @@
+{
+	"espStreams": [
+		{
+			"eventName": "load",
+			"espWindow": "projectA/queryB/windowC",
+			"identityField": "subject_id",
+			"espWindowMappings": {
+				"ID": "timestamp",
+				"pubStr": "event_channel",
+				"pubDate": "date",
+				"pubDouble": "value",
+				"pubInt64": "amount",
+				"putTime": "time"
+			}
+		}, {
+			"eventName": "click",
+			"espWindow": "projectA/queryB/windowC",
+			"identityField": "customer_id",
+			"espWindowMappings": {
+				"ID": "timestamp",
+				"pubStr": "event_channel",
+				"pubDate": "date",
+				"pubDouble": "value",
+				"pubInt64": "amount",
+				"putTime": "time"
+			}
+		}
+	]
+}

@@ -1,0 +1,61 @@
+{
+	"rtdmStreams": [
+		{
+			"eventName": "load",
+			"rtdmEvent": "NameOfRTDMEvent",
+			"identityField": "subject_id",
+			"rtdmEventMetadata": {
+				"Vid": "Character",
+				"Channel": "Character",
+				"ScreenDetails": "Character",
+				"URI": "Character",
+				"Event": "Character",
+				"Domain": "Character",
+				"Browser": "Character",
+				"Language": "Character",
+				"PageTitle": "Character",
+				"Timestamp": "Timestamp"
+			},
+			"rtdmEventMappings": {
+				"vid": "Vid",
+				"event_channel": "Channel",
+				"screen_info": "ScreenDetails",
+				"uri": "URI",
+				"event": "Event",
+				"domain": "Domain",
+				"user_agent": "Browser",
+				"browser_language": "Language",
+				"page_title": "PageTitle",
+				"timestamp": "Timestamp"
+			}
+		}, {
+			"eventName": "click",
+			"rtdmEvent": "NameOfRTDMEvent",
+			"identityField": "customer_id",
+			"rtdmEventMetadata": {
+				"Vid": "Character",
+				"Channel": "Character",
+				"ScreenDetails": "Character",
+				"URI": "Character",
+				"Event": "Character",
+				"Domain": "Character",
+				"Browser": "Character",
+				"Language": "Character",
+				"PageTitle": "Character",
+				"Timestamp": "Timestamp"
+			},
+			"rtdmEventMappings": {
+				"vid": "Vid",
+				"event_channel": "Channel",
+				"screen_info": "ScreenDetails",
+				"uri": "URI",
+				"event": "Event",
+				"domain": "Domain",
+				"user_agent": "Browser",
+				"browser_language": "Language",
+				"page_title": "PageTitle",
+				"timestamp": "Timestamp"
+			}
+		}
+	]
+}

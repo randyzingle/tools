@@ -19,6 +19,7 @@ repositories {
 dependencies {
     // The production code uses Guava
     compile 'com.google.guava:guava:20.0'
+	compile group: 'org.apache.zookeeper', name: 'zookeeper', version: '3.4.6'
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

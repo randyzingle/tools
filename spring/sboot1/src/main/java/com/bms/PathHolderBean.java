@@ -6,12 +6,12 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PathHolderBean {
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private static String JAR_TOKEN = ".jar!";
 	

@@ -8,13 +8,13 @@ import java.sql.Statement;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import com.sas.mkt.kafka.domain.TestEvent;
 
 public class PostgreSQLWriter implements CIKafkaRecordProcessor {
 	
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private Connection conn;
 	private PreparedStatement ps;
 

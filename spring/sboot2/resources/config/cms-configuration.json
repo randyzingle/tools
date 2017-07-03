@@ -1,0 +1,1 @@
+[{"id":"local_cms","name":"Sample Content Management System","className":"com.sas.mkt.apigw.sdk.streaming.agent.listener.thirdparty.LocalCmsProcessor","supportSearch":true,"supportFolders":false},{"id":"aem","name":"AEM Content Management System","className":"com.sas.mkt.apigw.sdk.streaming.agent.listener.thirdparty.AEMCmsProcessor","supportSearch":false,"supportFolders":true}]

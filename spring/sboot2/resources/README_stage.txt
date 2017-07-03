@@ -1,1 +1,0 @@
-The files for staging functionality can be found in the "stage" folder of this distribution.

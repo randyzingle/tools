@@ -5,6 +5,41 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/3.3/userguide/tutorial_java_projects.html
  */
+buildscript {
+    repositories {
+        maven {
+            url 'http://baldur:8081/artifactory/plugins-release'
+            
+        }
+        
+    }
+    dependencies {
+        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:+"
+    }
+}
+
+allprojects {
+    apply plugin: "com.jfrog.artifactory"
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'libs-release-local'
+            maven = true
+            
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+            maven = true
+            
+        }
+    }
+}
 
 description = 'Java Basics & Fundamentals'
 
@@ -12,6 +47,9 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 // this will give us the 'gradle run' task which will call the given class with the given args
 apply plugin: 'application'
+// this will generate a pom.xml and let us upload to a maven repo
+apply plugin: 'maven'
+
 mainClassName = 'com.bms.base.MainApplication'
 run.args = ['Finnr']
 
@@ -39,6 +77,8 @@ dependencies {
 // 'extend' builtin gradle task
 // can call this from the root project with: gradlew base:copyPoem
 task copyPoem(type:Copy) {
+    group 'poetry'
+    description 'copies xanadu.txt to the docs dir'
     from file("src/main/resources/xanadu.txt")
     into file("${buildDir}/docs")
 }
@@ -69,7 +109,11 @@ task list {
 
 task baldur {
     description = 'Root of the PC heirarchy'
-    doFirst {println "baldur task"}
+    doFirst {
+        println "baldur task"
+        println artifactory_contextUrl
+        println "the url is: ${artifactory_contextUrl}"
+    }
 }
 
 task finnr(dependsOn: baldur) {
@@ -85,7 +129,7 @@ task aldir(dependsOn: finnr) {
 // customize the repo we upload to (use file repo)
 uploadArchives {
     repositories {
-        flatDir {dirs "${rootDir}/tempRepo"}
+        //flatDir {dirs "${rootDir}/tempRepo"}
     }
 }
 

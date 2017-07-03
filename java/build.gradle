@@ -70,6 +70,11 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+
+    // you can specify your own repo
+   // maven {
+       // url 'http://baldur:8081/artifactory/ext-release-local'
+  //  }
 }
 
 // jars to pull in

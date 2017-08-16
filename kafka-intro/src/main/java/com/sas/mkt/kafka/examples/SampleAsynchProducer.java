@@ -10,7 +10,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import com.sas.mkt.kafka.clients.utils.KafkaUtilityService;
 import com.sas.mkt.kafka.clients.utils.TestRecordGenerator;
@@ -18,7 +18,7 @@ import com.sas.mkt.kafka.domain.TestEvent;
 
 public class SampleAsynchProducer {
 	
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private String topic = "test-baldur6";
 	private String clientID = "baldur1";

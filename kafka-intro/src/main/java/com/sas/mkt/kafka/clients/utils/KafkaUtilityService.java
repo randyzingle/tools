@@ -14,7 +14,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
@@ -27,7 +27,7 @@ public class KafkaUtilityService {
 	public static String CLUSTER_KEY = "KAFKA_CLUSTER";
 	public static String REGISTRY_KEY = "KAFKA_SCHEMA_REGISTRY";
 	
-	private static Logger logger = Logger.getLogger(KafkaUtilityService.class);
+	private static Logger logger = LoggerFactory.getLogger(KafkaUtilityService.class);
 	
 	public static long getBufferMemoryConfig() {
 		MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();

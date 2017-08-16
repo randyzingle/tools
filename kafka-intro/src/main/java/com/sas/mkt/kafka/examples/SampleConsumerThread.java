@@ -5,14 +5,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import com.sas.mkt.kafka.clients.utils.CIKafkaRecordProcessor;
 import com.sas.mkt.kafka.clients.utils.KafkaUtilityService;
 
 public class SampleConsumerThread implements Runnable {
 	
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private KafkaConsumer<String, SpecificRecordBase> consumer;
 	
 	private CIKafkaRecordProcessor recordProcessor;

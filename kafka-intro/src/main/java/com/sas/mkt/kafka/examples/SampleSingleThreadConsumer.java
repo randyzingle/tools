@@ -4,14 +4,14 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.log4j.Logger;
+import org.slf4j.*;
 
 import com.sas.mkt.kafka.clients.utils.CIKafkaRecordProcessor;
 import com.sas.mkt.kafka.clients.utils.KafkaUtilityService;
 import com.sas.mkt.kafka.clients.utils.PostgreSQLWriter;
 
 public class SampleSingleThreadConsumer {
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private String topic = "test-baldur6";
 	private String groupID = "baldur2";

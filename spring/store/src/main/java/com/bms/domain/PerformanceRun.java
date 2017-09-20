@@ -15,7 +15,7 @@ public class PerformanceRun {
 	
 	public PerformanceRun(String runName, Timestamp startTime, Long numberOfRecords) {
 		super();
-		this.runName = runName;
+		this.runName = runName + System.currentTimeMillis();
 		this.startTime = startTime;
 		this.numberOfRecords = numberOfRecords;
 	}

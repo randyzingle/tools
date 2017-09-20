@@ -11,11 +11,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.bms.domain.Customer;
 import com.bms.domain.PerformanceRun;
 import com.bms.domain.PerformanceRunRepository;
 import com.bms.domain.ProducerProperties;
 import com.bms.domain.ProducerPropertiesRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 public class Application {
@@ -29,12 +29,20 @@ public class Application {
 	@Bean
 	public CommandLineRunner demo(PerformanceRunRepository prr, ProducerPropertiesRepository ppr) {
 		return (args) -> {
-			ProducerProperties pp = new ProducerProperties("compression", "snappy");
+			ProducerProperties pp1 = new ProducerProperties("compression", "snappy");
+			ProducerProperties pp2 = new ProducerProperties("linger.ms", "10");
+			ProducerProperties pp3 = new ProducerProperties("buffer.size", "16544");
 			PerformanceRun pr = new PerformanceRun("run1", new Timestamp(System.currentTimeMillis()), 1000L);
 			Set<ProducerProperties> producerProperties = new HashSet<>();
-			producerProperties.add(pp);
+			producerProperties.add(pp1);
+			producerProperties.add(pp2);
+			producerProperties.add(pp3);
 			pr.setProducerProperties(producerProperties);
 			prr.save(pr);
+			
+			ObjectMapper mapper = new ObjectMapper();
+			String s = mapper.writeValueAsString(pr);
+			log.info(s);
 
 			log.info("");
 		};

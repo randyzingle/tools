@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class ProducerProperties {
 	
@@ -23,6 +25,7 @@ public class ProducerProperties {
 	private String name;
 	private String value;
 	
+	@JsonIgnore
 	@ManyToOne
 	private PerformanceRun performanceRun;
 

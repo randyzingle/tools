@@ -37,6 +37,9 @@ public class Application {
 			producerProperties.add(pp1);
 			producerProperties.add(pp2);
 			producerProperties.add(pp3);
+			pp1.setPerformanceRun(pr);
+			pp2.setPerformanceRun(pr);
+			pp3.setPerformanceRun(pr);
 			pr.setProducerProperties(producerProperties);
 			prr.save(pr);
 			

@@ -13,13 +13,11 @@ public class PerformanceRun {
 	
 	public PerformanceRun() {}
 	
-	public PerformanceRun(String runName, Timestamp startTime, Long numberOfRecords,
-			Set<ProducerProperties> producerProperties) {
+	public PerformanceRun(String runName, Timestamp startTime, Long numberOfRecords) {
 		super();
 		this.runName = runName;
 		this.startTime = startTime;
 		this.numberOfRecords = numberOfRecords;
-		this.producerProperties = producerProperties;
 	}
 
 	@Id

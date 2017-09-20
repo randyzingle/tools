@@ -9,11 +9,10 @@ public class ProducerProperties {
 	
 	public ProducerProperties() {};
 	
-	public ProducerProperties(String name, String value, PerformanceRun performanceRun) {
+	public ProducerProperties(String name, String value) {
 		super();
 		this.name = name;
 		this.value = value;
-		this.performanceRun = performanceRun;
 	}
 
 	@Id

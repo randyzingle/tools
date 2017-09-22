@@ -1,4 +1,4 @@
-package com.bms.domain;
+package com.sas.mkt.kafka.performance.domain;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -175,9 +175,9 @@ public class ProducerPerformanceRun {
 		return producerProperties;
 	}
 
-//	public void setProducerProperties(Set<ProducerProperty> producerProperties) {
-//		this.producerProperties = producerProperties;
-//	}
+	public void setProducerProperties(Set<ProducerProperty> producerProperties) {
+		this.producerProperties = producerProperties;
+	}
 	
 	public void addProducerProperty(ProducerProperty producerProperty) {
 		if (this.producerProperties == null) producerProperties = new HashSet<>();

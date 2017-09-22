@@ -1,7 +1,6 @@
 package com.bms;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -11,11 +10,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.bms.domain.ProducerPerformanceRun;
-import com.bms.domain.PerformanceRunRepository;
-import com.bms.domain.ProducerProperty;
-import com.bms.domain.ProducerPropertiesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sas.mkt.kafka.performance.domain.ProducerPerformanceRun;
+import com.sas.mkt.kafka.performance.domain.ProducerPerformanceRunRepository;
+import com.sas.mkt.kafka.performance.domain.ProducerProperty;
 
 @SpringBootApplication
 public class Application {
@@ -27,7 +25,7 @@ public class Application {
 	}
 	
 	@Bean
-	public CommandLineRunner demo(PerformanceRunRepository prr) {
+	public CommandLineRunner demo(ProducerPerformanceRunRepository prr) {
 		return (args) -> {
 			ProducerProperty pp1 = new ProducerProperty("compression", "snappy", "String");
 			ProducerProperty pp2 = new ProducerProperty("linger.ms", "10", "String");

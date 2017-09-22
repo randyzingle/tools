@@ -1,4 +1,4 @@
-package com.bms.domain;
+package com.sas.mkt.kafka.performance.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

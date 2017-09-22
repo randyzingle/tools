@@ -11,9 +11,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.bms.domain.PerformanceRun;
+import com.bms.domain.ProducerPerformanceRun;
 import com.bms.domain.PerformanceRunRepository;
-import com.bms.domain.ProducerProperties;
+import com.bms.domain.ProducerProperty;
 import com.bms.domain.ProducerPropertiesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,27 +27,33 @@ public class Application {
 	}
 	
 	@Bean
-	public CommandLineRunner demo(PerformanceRunRepository prr, ProducerPropertiesRepository ppr) {
+	public CommandLineRunner demo(PerformanceRunRepository prr) {
 		return (args) -> {
-			ProducerProperties pp1 = new ProducerProperties("compression", "snappy");
-			ProducerProperties pp2 = new ProducerProperties("linger.ms", "10");
-			ProducerProperties pp3 = new ProducerProperties("buffer.size", "16544");
-			PerformanceRun pr = new PerformanceRun("run1", new Timestamp(System.currentTimeMillis()), 1000L);
-			Set<ProducerProperties> producerProperties = new HashSet<>();
-			producerProperties.add(pp1);
-			producerProperties.add(pp2);
-			producerProperties.add(pp3);
-			pp1.setPerformanceRun(pr);
-			pp2.setPerformanceRun(pr);
-			pp3.setPerformanceRun(pr);
-			pr.setProducerProperties(producerProperties);
+			ProducerProperty pp1 = new ProducerProperty("compression", "snappy", "String");
+			ProducerProperty pp2 = new ProducerProperty("linger.ms", "10", "String");
+			ProducerProperty pp3 = new ProducerProperty("buffer.size", "16544", "String");
+			ProducerPerformanceRun pr = new ProducerPerformanceRun("run1", new Timestamp(System.currentTimeMillis()), 1000L);
+			pr.addProducerProperty(pp1);
+			pr.addProducerProperty(pp2);
+			pr.addProducerProperty(pp3);
 			prr.save(pr);
+			
+			log.info("SAVED RUN TO DATABASE *********************");
 			
 			ObjectMapper mapper = new ObjectMapper();
 			String s = mapper.writeValueAsString(pr);
 			log.info(s);
-
-			log.info("");
+			
+			// pull out properties from json string
+			ProducerPerformanceRun npr = mapper.readValue(s, ProducerPerformanceRun.class);
+			Set<ProducerProperty> set = npr.getProducerProperties();
+			for (ProducerProperty p: set) {
+				System.out.println(p);
+			}
+			
+			log.info("READ FROM DATABASE *************************");
+			ProducerPerformanceRun dbrun = prr.findOne(pr.getRunName());
+			log.info(dbrun.toString());
 		};
 	}
 

@@ -9,14 +9,15 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class ProducerProperties {
+public class ProducerProperty {
 	
-	public ProducerProperties() {};
+	public ProducerProperty() {};
 	
-	public ProducerProperties(String name, String value) {
+	public ProducerProperty(String name, String value, String type) {
 		super();
 		this.name = name;
 		this.value = value;
+		this.type = type;
 	}
 
 	@Id
@@ -24,18 +25,11 @@ public class ProducerProperties {
 	private Long id;
 	private String name;
 	private String value;
+	private String type;
 	
 	@JsonIgnore
 	@ManyToOne
-	private PerformanceRun performanceRun;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private ProducerPerformanceRun performanceRun;
 
 	public String getName() {
 		return name;
@@ -53,12 +47,25 @@ public class ProducerProperties {
 		this.value = value;
 	}
 
-	public PerformanceRun getPerformanceRun() {
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public ProducerPerformanceRun getPerformanceRun() {
 		return performanceRun;
 	}
 
-	public void setPerformanceRun(PerformanceRun performanceRun) {
+	public void setPerformanceRun(ProducerPerformanceRun performanceRun) {
 		this.performanceRun = performanceRun;
+	}
+
+	@Override
+	public String toString() {
+		return "ProducerProperty [name=" + name + ", value=" + value + ", type=" + type + "]";
 	}
 
 }

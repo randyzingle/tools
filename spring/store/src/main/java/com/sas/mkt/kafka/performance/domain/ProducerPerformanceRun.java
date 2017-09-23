@@ -39,6 +39,21 @@ public class ProducerPerformanceRun {
 	private Long numberPartitions;
 	private Long replicationFactor;
 	private Long numberOfProducers;
+	
+	// server properties
+	private String javaVmVendor;
+	private String javaVersion;
+	private String osName;
+	private String osVersion;
+	private String osArch;
+	
+	public void setServerProperties(ServerProperties sp) {
+		javaVmVendor = sp.getJavaVmVendor();
+		javaVersion = sp.getJavaVersion();
+		osName = sp.getOsName();
+		osVersion = sp.getOsVersion();
+		osArch = sp.getOsArch();
+	}
 			
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="performanceRun", fetch=FetchType.EAGER)
 	private Set<ProducerProperty> producerProperties;
@@ -185,6 +200,46 @@ public class ProducerPerformanceRun {
 		producerProperty.setPerformanceRun(this);
 	}
 
+	public String getJavaVmVendor() {
+		return javaVmVendor;
+	}
+
+	public void setJavaVmVendor(String javaVmVendor) {
+		this.javaVmVendor = javaVmVendor;
+	}
+
+	public String getJavaVersion() {
+		return javaVersion;
+	}
+
+	public void setJavaVersion(String javaVersion) {
+		this.javaVersion = javaVersion;
+	}
+
+	public String getOsName() {
+		return osName;
+	}
+
+	public void setOsName(String osName) {
+		this.osName = osName;
+	}
+
+	public String getOsVersion() {
+		return osVersion;
+	}
+
+	public void setOsVersion(String osVersion) {
+		this.osVersion = osVersion;
+	}
+
+	public String getOsArch() {
+		return osArch;
+	}
+
+	public void setOsArch(String osArch) {
+		this.osArch = osArch;
+	}
+
 	@Override
 	public String toString() {
 		return "ProducerPerformanceRun [runName=" + runName + ", messagesPerSec=" + messagesPerSec + ", kbytesPerSec="
@@ -194,7 +249,9 @@ public class ProducerPerformanceRun {
 				+ percentMessagesReceived + ", averageRecordSizeBytes=" + averageRecordSizeBytes + ", numberKeys="
 				+ numberKeys + ", topicName=" + topicName + ", numberPartitions=" + numberPartitions
 				+ ", replicationFactor=" + replicationFactor + ", numberOfProducers=" + numberOfProducers
-				+ ", producerProperties=" + producerProperties + "]";
+				+ ", javaVmVendor=" + javaVmVendor + ", javaVersion=" + javaVersion + ", osName=" + osName
+				+ ", osVersion=" + osVersion + ", osArch=" + osArch + ", producerProperties=" + producerProperties
+				+ "]";
 	}
 
 }

@@ -1,11 +1,7 @@
 package com.sas.mkt.kafka.performance.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.Properties;
 
-@Entity
 public class ServerProperties {
 
 	private static final String JAVA_VM_VENDER = "java.vm.vendor";
@@ -14,15 +10,29 @@ public class ServerProperties {
 	private static final String OS_VERSION = "os.version";
 	private static final String OS_ARCH = "os.arch";
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	
 	private String javaVmVendor;
 	private String javaVersion;
 	private String osName;
 	private String osVersion;
 	private String osArch;
+	
+//	public static void main (String[] args) {
+//		System.out.println(ServerProperties.getServerProperties());
+//	}
+	
+	public static ServerProperties getServerProperties() {
+		ServerProperties sp = new ServerProperties();
+		Properties p = System.getProperties();
+
+		sp.setJavaVmVendor(p.getProperty(JAVA_VM_VENDER).toString());
+		sp.setJavaVersion(p.getProperty(JAVA_VERSION).toString());
+		sp.setOsName(p.getProperty(OS_NAME).toString());
+		sp.setOsVersion(p.getProperty(OS_VERSION).toString());
+		sp.setOsArch(p.getProperty(OS_ARCH).toString());
+
+		return sp;
+	}
+	
 	public String getJavaVmVendor() {
 		return javaVmVendor;
 	}

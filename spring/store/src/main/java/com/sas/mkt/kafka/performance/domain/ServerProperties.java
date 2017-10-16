@@ -15,6 +15,7 @@ public class ServerProperties {
 	private String osName;
 	private String osVersion;
 	private String osArch;
+	private int numberProcessors;
 	
 //	public static void main (String[] args) {
 //		System.out.println(ServerProperties.getServerProperties());
@@ -29,6 +30,7 @@ public class ServerProperties {
 		sp.setOsName(p.getProperty(OS_NAME).toString());
 		sp.setOsVersion(p.getProperty(OS_VERSION).toString());
 		sp.setOsArch(p.getProperty(OS_ARCH).toString());
+		sp.numberProcessors = Runtime.getRuntime().availableProcessors();
 
 		return sp;
 	}
@@ -62,6 +64,9 @@ public class ServerProperties {
 	}
 	public void setOsArch(String osArch) {
 		this.osArch = osArch;
+	}
+	public int getNumberProcessors() {
+		return numberProcessors;
 	}
 	@Override
 	public String toString() {

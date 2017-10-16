@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 public class ProducerPerformanceRun {
@@ -46,6 +49,12 @@ public class ProducerPerformanceRun {
 	private String osName;
 	private String osVersion;
 	private String osArch;
+	private int numberProcessors;
+	
+	// control properties (not persisted)
+	@JsonInclude
+	@Transient
+	private boolean useAllCores;
 	
 	public void setServerProperties(ServerProperties sp) {
 		javaVmVendor = sp.getJavaVmVendor();
@@ -53,6 +62,7 @@ public class ProducerPerformanceRun {
 		osName = sp.getOsName();
 		osVersion = sp.getOsVersion();
 		osArch = sp.getOsArch();
+		numberProcessors = sp.getNumberProcessors();
 	}
 			
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="performanceRun", fetch=FetchType.EAGER)
@@ -199,6 +209,11 @@ public class ProducerPerformanceRun {
 		producerProperties.add(producerProperty);
 		producerProperty.setPerformanceRun(this);
 	}
+	
+	public void removeProducerProperty(ProducerProperty producerProperty) {
+		if (this.producerProperties == null) return;
+		producerProperties.remove(producerProperty);
+	}
 
 	public String getJavaVmVendor() {
 		return javaVmVendor;
@@ -240,6 +255,22 @@ public class ProducerPerformanceRun {
 		this.osArch = osArch;
 	}
 
+	public int getNumberProcessors() {
+		return numberProcessors;
+	}
+
+	public void setNumberProcessors(int numberProcessors) {
+		this.numberProcessors = numberProcessors;
+	}
+
+	public boolean isUseAllCores() {
+		return useAllCores;
+	}
+
+	public void setUseAllCores(boolean useAllCores) {
+		this.useAllCores = useAllCores;
+	}
+
 	@Override
 	public String toString() {
 		return "ProducerPerformanceRun [runName=" + runName + ", messagesPerSec=" + messagesPerSec + ", kbytesPerSec="
@@ -250,8 +281,8 @@ public class ProducerPerformanceRun {
 				+ numberKeys + ", topicName=" + topicName + ", numberPartitions=" + numberPartitions
 				+ ", replicationFactor=" + replicationFactor + ", numberOfProducers=" + numberOfProducers
 				+ ", javaVmVendor=" + javaVmVendor + ", javaVersion=" + javaVersion + ", osName=" + osName
-				+ ", osVersion=" + osVersion + ", osArch=" + osArch + ", producerProperties=" + producerProperties
-				+ "]";
+				+ ", osVersion=" + osVersion + ", osArch=" + osArch + ", numberProcessors=" + numberProcessors
+				+ ", useAllCores=" + useAllCores + ", producerProperties=" + producerProperties + "]";
 	}
 
 }

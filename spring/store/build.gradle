@@ -31,23 +31,39 @@ ext {
 versions.avro = '1.8.2'
 versions.kafka = '0.11.0.1'
 versions.confluent = '3.2.0'
+versions.springBoot = '1.5.7.RELEASE'
+versions.spring = '4.3.5.RELEASE'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
+    compile "org.springframework:spring-web:${versions.spring}"
+	compile "org.springframework:spring-websocket:${versions.spring}"
+	compile "org.springframework.boot:spring-boot-starter-websocket:${versions.springBoot}"
+    
     compile("com.h2database:h2")
     compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.1'
     
-    compile "org.apache.avro:avro:${versions.avro}"
+    compile ("org.apache.avro:avro:${versions.avro}"){
+        exclude group: 'org.slf4j'
+        exclude group: 'log4j'
+    }
     
     compile "org.apache.kafka:kafka-clients:${versions.kafka}"
     compile "org.apache.kafka:kafka-streams:${versions.kafka}"
     compile "org.apache.kafka:connect-api:${versions.kafka}"
 
-    compile "io.confluent:kafka-avro-serializer:${versions.confluent}"
-    compile "io.confluent:kafka-schema-registry:${versions.confluent}"
+    compile ("io.confluent:kafka-avro-serializer:${versions.confluent}"){
+        exclude group: 'org.slf4j'
+        exclude group: 'log4j'
+    }
+    compile ("io.confluent:kafka-schema-registry:${versions.confluent}"){
+        exclude group: 'org.slf4j'
+        exclude group: 'log4j'
+    }
     
     compile ("com.sas.mkt.kafka:mkt-kafka-shared:1.${buildSprint}.+") {
         exclude group: 'org.slf4j'

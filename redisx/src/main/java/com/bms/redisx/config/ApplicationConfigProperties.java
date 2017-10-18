@@ -1,18 +1,27 @@
 package com.bms.redisx.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@Component
 @ConfigurationProperties(prefix = "mkt.events", ignoreUnknownFields = false)
 public class ApplicationConfigProperties {
+	// application specific properties - set locally
 	private String handlerChain;
 	private String sourceTopic;
 	private String destinationTopic;
 	private String consumerGroup;
 	private boolean readFromStart;
 	private boolean geoAutoReload;
+	
+	// config server - get other global properties from here
 	private String configServiceUrl;
+	
+	// pull these from the config server
 	private String tenantServiceUrl;
 	private String kafkaTopicPrefix;
+	
+	// running as an aws stack
 	private String tierName;
 
 	public String getTierName() {
@@ -94,5 +103,16 @@ public class ApplicationConfigProperties {
 	public void setKafkaTopicPrefix(String kafkaTopicPrefix) {
 		this.kafkaTopicPrefix = kafkaTopicPrefix;
 	}
+
+	@Override
+	public String toString() {
+		return "ApplicationConfigProperties [handlerChain=" + handlerChain + ", sourceTopic=" + sourceTopic
+				+ ", destinationTopic=" + destinationTopic + ", consumerGroup=" + consumerGroup + ", readFromStart="
+				+ readFromStart + ", geoAutoReload=" + geoAutoReload + ", configServiceUrl=" + configServiceUrl
+				+ ", tenantServiceUrl=" + tenantServiceUrl + ", kafkaTopicPrefix=" + kafkaTopicPrefix + ", tierName="
+				+ tierName + "]";
+	}
+	
+	
 
 }

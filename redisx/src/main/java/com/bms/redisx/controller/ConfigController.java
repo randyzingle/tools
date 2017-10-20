@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bms.redisx.config.ApplicationConfigProperties;
-import com.bms.redisx.config.ConfigPropertyShort;
-import com.bms.redisx.config.ConfigurationClient;
+import com.bms.redisx.config.ConfigEvent;
+import com.bms.redisx.config.server.ConfigPropertyShort;
+import com.bms.redisx.config.server.ConfigurationClient;
 
 @RestController
 public class ConfigController {
@@ -25,6 +27,11 @@ public class ConfigController {
 	
 	@Autowired
 	ApplicationConfigProperties props;
+	
+	// use this to send the config event to our config application listener
+	// we won't need this once the config server is hooked up to Redis
+	@Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 	
 	private String tierName = "tier_global";
 	private String componentName = "";	
@@ -47,6 +54,19 @@ public class ConfigController {
 		disectProps();
 		// fire up new thread - cache stuff - etc
 		return s;
+	}
+	
+	@RequestMapping(value="/bark", method=RequestMethod.GET)
+	public String bark() {
+        System.out.println(props);
+        return "bark bark";
+	}
+	
+	@RequestMapping(value="/config", method=RequestMethod.GET)
+	public String config() {
+		ConfigEvent ce = new ConfigEvent(this, "config yourself!");
+		applicationEventPublisher.publishEvent(ce);
+		return "configged";
 	}
 	
 	private void disectProps() {
@@ -80,19 +100,19 @@ public class ConfigController {
 	
 	private List<ConfigPropertyShort> getTier() {
 		List<ConfigPropertyShort> eventsList = null;
-		eventsList = ConfigurationClient.getPropertyFromConfigServer("dev", "mkt-events", "", auditComponent);	
+		eventsList = new ConfigurationClient().getPropertyFromConfigServer("dev", "mkt-events", "", auditComponent);	
 		return eventsList;
 	}
 	
 	private List<ConfigPropertyShort> getRedis() {
 		List<ConfigPropertyShort> bucketList = null;
-		bucketList = ConfigurationClient.getPropertyFromConfigServer("tier_global", "aws-redis", "", auditComponent);	
+		bucketList = new ConfigurationClient().getPropertyFromConfigServer("tier_global", "aws-redis", "", auditComponent);	
 		return bucketList;
 	}
 	
 	private List<ConfigPropertyShort> getBuckets() {
 		List<ConfigPropertyShort> bucketList = null;
-		bucketList = ConfigurationClient.getPropertyFromConfigServer("tier_global", "aws-s3-buckets", "", auditComponent);	
+		bucketList = new ConfigurationClient().getPropertyFromConfigServer("tier_global", "aws-s3-buckets", "", auditComponent);	
 		return bucketList;
 	}
 

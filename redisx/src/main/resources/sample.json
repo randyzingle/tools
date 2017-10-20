@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "name": "kafkaTopicPrefix",
+  "value": "mymir",
+  "tierNm": "razing",
+  "componentNm": "mkt-events"
+}

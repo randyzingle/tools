@@ -1,4 +1,4 @@
-package com.bms.redisx.config;
+package com.bms.redisx.config.server;
 
 import java.util.List;
 

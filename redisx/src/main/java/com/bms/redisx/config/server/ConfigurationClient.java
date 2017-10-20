@@ -1,17 +1,24 @@
-package com.bms.redisx.config;
+package com.bms.redisx.config.server;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.bms.redisx.config.ApplicationConfigProperties;
+import com.bms.redisx.config.TierGlobalConfigProperties;
+
+@Component
 public class ConfigurationClient {
 
-	public static String configServiceUrl = "http://configservice-dev.cidev.sas.us:8080";
+	@Autowired
+	public ApplicationConfigProperties appProps;
 
 	public static void main(String[] args) {
 		String tierName = "tier_global";
@@ -21,6 +28,8 @@ public class ConfigurationClient {
 		
 		String auditComponent = "baldur";
 		ConfigurationClient cc = new ConfigurationClient();
+		cc.appProps = new ApplicationConfigProperties();
+		cc.appProps.setConfigServiceUrl("http://configservice-dev.cidev.sas.us:8080/");
 		long startTime = System.currentTimeMillis();
 		List<ConfigPropertyShort> props = cc.getPropertyFromConfigServer(tierName, componentName, name, auditComponent);
 		long endTime = System.currentTimeMillis();
@@ -28,30 +37,33 @@ public class ConfigurationClient {
 		int count=0;
 		for (ConfigPropertyShort cp : props) {
 			count++;
-			System.out.println(count + ": " + cp);
+			if (!cp.getComponentNm().equals("mkt-backup")) {
+				System.out.println(count + ": " + cp);
+			}
 		}
 		System.out.println();
 
-//		cc.printDeleteUrls(props);
+//		cc.printIdUrl(props);
+
 	}
 
-	private void printDeleteUrls(List<ConfigPropertyShort> props) {
+	private void printIdUrl(List<ConfigPropertyShort> props) {
 		for (ConfigPropertyShort cp : props) {
-			ConfigLinks del = null;
+			ConfigLinks link = null;
 			List<ConfigLinks> links = cp.getLinks();
 			for (ConfigLinks cl : links) {
 				if (cl.getMethod().equals("DELETE"))
-					del = cl;
+					link = cl;
 			}
-			if (del != null) {
-				String url = configServiceUrl + del.getUri();
+			if (link != null) {
+				String url = appProps.getConfigServiceUrl() + link.getUri();
 				System.out.println(url + "  " + cp.getName());
 			}
 		}
 	}
 
-	public static List<ConfigPropertyShort> getPropertyFromConfigServer(String tierName, String componentName, String name, String auditComponent) {
-		String url = configServiceUrl + "configproperties?tierNm=" + tierName + "&componentNm=" + componentName
+	public List<ConfigPropertyShort> getPropertyFromConfigServer(String tierName, String componentName, String name, String auditComponent) {
+		String url = appProps.getConfigServiceUrl() + "configproperties?tierNm=" + tierName + "&componentNm=" + componentName
 				+ "&name=" + name + "&limit=500";
 		RestTemplate rt = new RestTemplate();
 		List<ConfigPropertyShort> props = null;

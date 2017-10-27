@@ -21,8 +21,8 @@ public class ConfigurationClient {
 	public ApplicationConfigProperties appProps;
 
 	public static void main(String[] args) {
-		String tierName = "tier_global";
-		String componentName = "";	
+		String tierName = "";
+		String componentName = "mkt-events";	
 		String name = "";
 //		String name = "kafkaCluster";
 		

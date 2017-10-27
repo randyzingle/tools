@@ -2,13 +2,13 @@ package com.bms.redisx.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bms.redisx.config.ApplicationConfigProperties;
 import com.bms.redisx.config.ConfigEvent;
+import com.bms.redisx.config.TierGlobalConfigProperties;
 import com.bms.redisx.config.server.ConfigPropertyShort;
 import com.bms.redisx.config.server.ConfigurationClient;
 
@@ -26,7 +27,10 @@ public class ConfigController {
 	Environment env;
 	
 	@Autowired
-	ApplicationConfigProperties props;
+	ApplicationConfigProperties appprops;
+	
+	@Autowired
+	TierGlobalConfigProperties tgcprops;
 	
 	// use this to send the config event to our config application listener
 	// we won't need this once the config server is hooked up to Redis
@@ -49,7 +53,7 @@ public class ConfigController {
 	@RequestMapping(value = "/run", method = RequestMethod.GET)
 	public String run() {
 		String s = env.toString();
-		System.out.println(props);
+		System.out.println(appprops);
 //		checkAllProps();
 		disectProps();
 		// fire up new thread - cache stuff - etc
@@ -58,7 +62,8 @@ public class ConfigController {
 	
 	@RequestMapping(value="/bark", method=RequestMethod.GET)
 	public String bark() {
-        System.out.println(props);
+        System.out.println(appprops);
+        System.out.println(tgcprops);
         return "bark bark";
 	}
 	
@@ -72,13 +77,28 @@ public class ConfigController {
 	private void disectProps() {
 		ConfigurableEnvironment ce = (ConfigurableEnvironment)env;
 		MutablePropertySources mps = ce.getPropertySources();
-		Map<String, Object> sysEnv = ce.getSystemEnvironment();
-		Map<String, Object> sysProp = ce.getSystemProperties();
-		Set<String> envset = sysEnv.keySet();
-		Set<String> proset = sysProp.keySet();
-		System.out.println(envset);
-		System.out.println(proset);
-		System.out.println();
+		Map<String, Object> sysEnv = ce.getSystemEnvironment(); // OS environment variables
+		Map<String, Object> sysProp = ce.getSystemProperties(); // Java system properties
+		boolean hasApp = mps.contains("applicationConfig: [classpath:/application.properties]");
+		boolean hasTG = mps.contains("class path resource [tier_global_overrides.properties]");
+		boolean hasConfigApp = mps.contains("CONFIG_SERVER_APPLICATION");
+		boolean hasConfigTG = mps.contains("CONFIG_SERVER_GLOBAL");
+		if (hasApp) {
+			PropertySource ps = mps.get("applicationConfig: [classpath:/application.properties]");
+			System.out.println(ps);
+		}
+		if (hasTG) {
+			PropertySource ps = mps.get("class path resource [tier_global_overrides.properties]");
+			System.out.println(ps);
+		}
+		if (hasConfigApp) {
+			PropertySource ps = mps.get("CONFIG_SERVER_APPLICATION");
+			System.out.println(ps);
+		}
+		if (hasConfigTG) {
+			PropertySource ps = mps.get("CONFIG_SERVER_GLOBAL");
+			System.out.println(ps);
+		}
 	}
 	
 	private void printList(String name, List<ConfigPropertyShort> list) {

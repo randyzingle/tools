@@ -18,7 +18,14 @@ public class ApplicationConfigProperties {
 	private String kafkaTopicPrefix;
 	// config server - passed in via ENV in EC2, application.properties in local runs
 	private String configServiceUrl;
+	private boolean useRedisConfig;
 	
+	public boolean isUseRedisConfig() {
+		return useRedisConfig;
+	}
+	public void setUseRedisConfig(boolean useRedisConfig) {
+		this.useRedisConfig = useRedisConfig;
+	}
 	public String getHandlerChain() {
 		return handlerChain;
 	}

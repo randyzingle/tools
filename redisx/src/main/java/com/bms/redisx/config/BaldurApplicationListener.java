@@ -5,17 +5,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.stereotype.Component;
 
 import com.bms.redisx.ApplicationConstants;
 import com.bms.redisx.config.server.ConfigPropertyShort;
 import com.bms.redisx.config.server.ConfigurationClient;
+import com.bms.redisx.config.ws.RedisPropertyListener;
 
 /**
  * This class loads application specific and tier_global properties from the Configuration Service.
@@ -43,6 +46,9 @@ public class BaldurApplicationListener {
 
 	@Autowired
 	Environment env;
+	
+	@Autowired
+	ApplicationContext ctx;
 
 	@Autowired
 	ApplicationConfigProperties applicationProps;
@@ -52,6 +58,9 @@ public class BaldurApplicationListener {
 	
 	@Autowired
 	ConfigurationClient configClient;
+	
+	@Autowired
+	RedisPropertyListener redisPropertyListener;
 
 	/*
 	 * This will be called when the ApplicationContext gets initialized and all the Beans have been loaded.
@@ -75,6 +84,8 @@ public class BaldurApplicationListener {
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		loadApplicationProperties();
 		loadTierGlobalProperties();
+		configureRedis();
+		redisPropertyListener.sendApplicationProperties(applicationProps);
 	}
 	
 	@EventListener
@@ -82,6 +93,16 @@ public class BaldurApplicationListener {
 		System.out.println(event.getMessage());
 		loadApplicationProperties();
 		loadTierGlobalProperties();
+	}
+	
+	private void configureRedis() {
+		JedisConnectionFactory factory = ctx.getBean(JedisConnectionFactory.class);
+		if (globalProps != null && globalProps.getRedisClusterHost() != null) {
+			factory.setHostName(globalProps.getRedisClusterHost());
+		}
+		if (globalProps != null && globalProps.getRedisClusterPort() != 0) {
+			factory.setPort(globalProps.getRedisClusterPort());
+		}
 	}
 
 	private void loadApplicationProperties() {
@@ -138,6 +159,7 @@ public class BaldurApplicationListener {
 		List<ConfigPropertyShort> cp = null;
 		
 		// Store props in TierGlobalConfigProperties but also as a PropertySource so we can tell *where* the property came from
+		
 		ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
 		MutablePropertySources sources = ce.getPropertySources();
 		Map<String, Object> csmap = new HashMap<>();
@@ -147,7 +169,7 @@ public class BaldurApplicationListener {
 		cp = configClient.getPropertyFromConfigServer(tierName, componentName, name, auditComponent);
 		for (ConfigPropertyShort cps : cp) {
 			if (cps.getName().equals(ApplicationConstants.TENANT_SERVICE_URL)) {
-				globalProps.setTenantServiceUrl(cps.getValue());
+				if(globalProps.getTenantServiceUrl() == null) globalProps.setTenantServiceUrl(cps.getValue());
 				csmap.put(cps.getName(), cps.getValue());
 			}
 		}
@@ -157,11 +179,11 @@ public class BaldurApplicationListener {
 		cp = configClient.getPropertyFromConfigServer(tierName, componentName, name, auditComponent);
 		for (ConfigPropertyShort cps : cp) {
 			if (cps.getName().equals(ApplicationConstants.TOPIC_NAME_ENHANCED_EVENTS)) {
-				globalProps.setTopicEnhancedEvents(cps.getValue());
+				if(globalProps.getTopicEnhancedEvents() == null) globalProps.setTopicEnhancedEvents(cps.getValue());
 				csmap.put(cps.getName(), cps.getValue());
 			}
 			if (cps.getName().equals(ApplicationConstants.TOPIC_NAME_RAW_EVENTS)) {
-				globalProps.setTopicRawEvents(cps.getValue());
+				if(globalProps.getTopicRawEvents() == null) globalProps.setTopicRawEvents(cps.getValue());
 				csmap.put(cps.getName(), cps.getValue());
 			}
 		}
@@ -177,14 +199,15 @@ public class BaldurApplicationListener {
 			if (cps.getName().equals(ApplicationConstants.REDIS_PORT)) {
 				try {
 					int port = Integer.parseInt(cps.getValue());
-					globalProps.setRedisClusterPort(port);
+					if(globalProps.getRedisClusterPort() == 0) globalProps.setRedisClusterPort(port);
 					csmap.put(cps.getName(), cps.getValue());
 				} catch (NumberFormatException ex) {
-					// log it - no redis for you!
+					ex.printStackTrace();
 				}
 			}
 		}
 		
+		// TODO get the order right - local should override config server for tier_global - complete for the below values
 		// Get whatever S3 Bucket info we need
 		componentName = ApplicationConstants.COMPONENTNM_AWS_S3_BUCKETS;
 		cp = configClient.getPropertyFromConfigServer(tierName, componentName, name, auditComponent);

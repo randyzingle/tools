@@ -10,7 +10,7 @@ import com.bms.redisx.config.TierGlobalConfigProperties;
 
 @SpringBootApplication
 public class Application {
-
+	
 	public static void main(String[] args) {
 			
 		ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
@@ -24,5 +24,6 @@ public class Application {
 		
 		TierGlobalConfigProperties tgcp = ctx.getBean(TierGlobalConfigProperties.class);
 		System.out.println(tgcp);
+		
 	}
 }

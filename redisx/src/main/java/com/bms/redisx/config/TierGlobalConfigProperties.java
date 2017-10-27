@@ -5,7 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:tier_global.properties")
+@PropertySource("classpath:tier_global_overrides.properties")
 @ConfigurationProperties(prefix = "tier_global", ignoreUnknownFields = false)
 public class TierGlobalConfigProperties {
 	

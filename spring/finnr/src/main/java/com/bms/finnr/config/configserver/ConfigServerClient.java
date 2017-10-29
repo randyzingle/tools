@@ -25,37 +25,32 @@ public class ConfigServerClient {
 	@Autowired
 	public ApplicationConfiguration appProps;
 	
-	@Autowired
-	public GlobalConfiguration globalProps;
-	
 	// this needs to be the application name
 	String auditComponent = "baldur";
 
 	public static void main(String[] args) {
 		String tierName = "razing";
 		String componentName = "mkt-events";	
-		String name = "";
-		String value = null;
+		String name = "readFromStart";
+		String value = "true";
 			
 		ConfigServerClient cc = new ConfigServerClient();
 		cc.appProps = new ApplicationConfiguration();
-		cc.globalProps = new GlobalConfiguration();
-		cc.globalProps.setConfigServiceUrl("http://configservice-dev.cidev.sas.us:8080/");
+		cc.appProps.setConfigServiceUrl("http://configservice-dev.cidev.sas.us:8080/");
 		
 		// create a new property
-		name = "kafkaTopicPrefix";
-		value = "bar-configServer";
 		cc.createSomeProps(tierName, componentName, name, value);
 		
 		// read the property back from the CS and print it out
 		cc.readSomeProps(tierName, componentName, name, value);
 		
-		// update it with some random # added to the value
-		cc.updateSomeProps(tierName, componentName, name, value);
-		
-//		// delete the property
-		ConfigProperty cp = cc.getProperties(tierName, componentName, name, value).get(0);
-		cc.deleteProperty(cp);
+//		// update it with some random # added to the value
+//		cc.updateSomeProps(tierName, componentName, name, value);
+//		cc.readSomeProps(tierName, componentName, name, value);
+//		
+////		// delete the property
+//		ConfigProperty cp = cc.getProperties(tierName, componentName, name, value).get(0);
+//		cc.deleteProperty(cp);
 		
 	}
 	
@@ -78,7 +73,7 @@ public class ConfigServerClient {
 		 
 		if (props != null && props.size() == 1) {
 			ConfigProperty cps = props.get(0);
-			cps.setValue(cps.getValue() + Math.random());
+			cps.setValue(cps.getValue());
 			updateProperty(cps);
 		}
 	}	
@@ -102,7 +97,7 @@ public class ConfigServerClient {
 	 */
 	public void deleteProperty(ConfigProperty cp) throws RestClientException {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = globalProps.getConfigServiceUrl() + "configproperties/" + cp.getId();
+		String url = appProps.getConfigServiceUrl() + "configproperties/" + cp.getId();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("AuditComponent", auditComponent);
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
@@ -113,7 +108,7 @@ public class ConfigServerClient {
 	
 	public void updateProperty(ConfigProperty cps) throws RestClientException {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = globalProps.getConfigServiceUrl() + "configproperties/" + cps.getId();
+		String url = appProps.getConfigServiceUrl() + "configproperties/" + cps.getId();
 		System.out.println(url);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("AuditComponent", auditComponent);
@@ -151,7 +146,7 @@ public class ConfigServerClient {
 
 	public List<ConfigProperty> createProperties(List<ConfigProperty> properties) throws RestClientException {
 		RestTemplate restTemplate = new RestTemplate();
-		String url = globalProps.getConfigServiceUrl() + "configproperties";
+		String url = appProps.getConfigServiceUrl() + "configproperties";
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("AuditComponent", auditComponent);
 		headers.set("Content-Type", ResourceCollection.MEDIA_TYPE_JSON_VALUE);
@@ -178,7 +173,7 @@ public class ConfigServerClient {
 		RestTemplate restTemplate = new RestTemplate();
 		String name = config.getName() == null ? "" : config.getName();
 		String value = config.getValue() == null ? "" : config.getValue();
-		String url = globalProps.getConfigServiceUrl() + "configproperties?tierNm=" + config.getTierNm() + "&componentNm=" 
+		String url = appProps.getConfigServiceUrl() + "configproperties?tierNm=" + config.getTierNm() + "&componentNm=" 
 				+ config.getComponentNm() + "&name=" + name + "&value=" + value + "&limit=500";
 		
 		HttpHeaders headers = new HttpHeaders();

@@ -1,7 +1,6 @@
 package com.bms.finnr.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -13,22 +12,21 @@ public class ApplicationEventListener {
 	@Autowired
 	ApplicationConfiguration appConfig;
 	
+	@Autowired
+	GlobalConfiguration globalConfig;
+
 	@EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
-        bigPrint("Context Refreshed");
+		ConfigUtils.bigPrint("Context Refreshed");
         System.out.println(appConfig.toString());
+        System.out.println(globalConfig.toString());
     }
 	
 	@EventListener
 	public void handleApplicationReady(ApplicationReadyEvent event) {
-		bigPrint("ApplicationReady");
+		ConfigUtils.bigPrint("ApplicationReady");
 		System.out.println(appConfig.toString());
-	}
-	
-	public static void bigPrint(String message) {
-		System.out.println("***********************************");
-		System.out.println("*  " + message);
-		System.out.println("***********************************");
+		System.out.println(globalConfig.toString());
 	}
 
 }

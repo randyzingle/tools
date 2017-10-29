@@ -5,7 +5,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import com.bms.finnr.config.ApplicationEventListener;
+import com.bms.finnr.config.ConfigUtils;
 
 @Component
 public class RedisRunner implements ApplicationRunner, Ordered{
@@ -17,7 +17,7 @@ public class RedisRunner implements ApplicationRunner, Ordered{
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		ApplicationEventListener.bigPrint("in RedisRunner");
+		ConfigUtils.bigPrint("in RedisRunner");
 		System.out.println(args.getOptionNames());
 	}
 

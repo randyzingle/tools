@@ -34,6 +34,7 @@ public class GlobalConfiguration extends Configuration {
 	private String topicRawEvents;
 	private String topicEnhancedEvents;
 	private String version;
+	private String sasMktKafkaSchemaRegistry;
 
 	public String getVersion() {
         return version;
@@ -107,13 +108,19 @@ public class GlobalConfiguration extends Configuration {
 	public void setTopicEnhancedEvents(String topicEnhancedEvents) {
 		this.topicEnhancedEvents = topicEnhancedEvents;
 	}
+    public String getSasMktKafkaSchemaRegistry() {
+        return sasMktKafkaSchemaRegistry;
+    }
+    public void setSasMktKafkaSchemaRegistry(String sasMktKafkaSchemaRegistry) {
+        this.sasMktKafkaSchemaRegistry = sasMktKafkaSchemaRegistry;
+    }
     @Override
     public String toString() {
         return "GlobalConfiguration [mktTenantServiceUrl=" + mktTenantServiceUrl + ", redisClusterPrimaryEndpoint=" + redisClusterPrimaryEndpoint
                 + ", redisClusterPrimaryEndpointPort=" + redisClusterPrimaryEndpointPort + ", dataBucketTopic=" + dataBucketTopic + ", configBucket="
                 + configBucket + ", dataBucket=" + dataBucket + ", deploymentBucket=" + deploymentBucket + ", opsBucket=" + opsBucket + ", testBucket="
-                + testBucket + ", topicRawEvents=" + topicRawEvents + ", topicEnhancedEvents=" + topicEnhancedEvents + ", version=" + version + "]";
+                + testBucket + ", topicRawEvents=" + topicRawEvents + ", topicEnhancedEvents=" + topicEnhancedEvents + ", version=" + version
+                + ", sasMktKafkaSchemaRegistry=" + sasMktKafkaSchemaRegistry + "]";
     }
-
 
 }

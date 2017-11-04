@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Configuration {
 
-    HashMap<String, ConfigurationOverride> originalProperties; 
+    HashMap<String, ConfigurationOverride> originalProperties = new HashMap<>();
     HashMap<String, ConfigurationOverride> oldOverrides = new HashMap<>();
     HashMap<String, ConfigurationOverride> newOverrides = new HashMap<>();
     

@@ -20,10 +20,9 @@ public class BaseEventListener {
     
     @EventListener
     public void handleApplicationConfigurationChanged(ApplicationConfigurationEvent ace) {
-        ConfigUtils.bigPrint("handleApplicationConfigurationChanged: " + ace.getOverrideList().toString());
+        System.out.println("#### handleApplicationConfigurationChanged: " + ace.getOverrideList().toString());
         for (ConfigurationOverride co: ace.getOverrideList()) {
-            System.out.println(co);
+            System.out.println("#### " + co);
         }
     }
-
 }

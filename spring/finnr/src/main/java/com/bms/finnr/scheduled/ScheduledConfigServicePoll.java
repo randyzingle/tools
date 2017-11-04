@@ -25,7 +25,7 @@ public class ScheduledConfigServicePoll {
     // default schedule will have us hitting the config server every 10 min = 600000 ms. Wait 5 min before first run
     // Override in application.properties. 
 //    @Scheduled(initialDelay=300000, fixedRateString = "${application.configServerPingRateMs:600000}")
-    @Scheduled(initialDelay=30000, fixedRateString = "${application.configServerPingRateMs:600000}")
+    @Scheduled(initialDelay=10000, fixedRateString = "${application.configServerPingRateMs:600000}")
     public void hitConfigServer() {
         System.out.printf("Hitting the configuration server at %s%n", dateFormat.format(new Date()));
         configServerRunner.refreshProperties();

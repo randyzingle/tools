@@ -70,8 +70,6 @@ import com.bms.finnr.scheduled.ApplicationConfigurationEvent;
 @Component
 public class ConfigServiceRunner implements ApplicationRunner, Ordered {
 
-    // private HashMap<String, String> tempMap = new HashMap<>();
-
     @Autowired
     Environment env;
 
@@ -121,7 +119,8 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         String name = "";
         String auditComponent = appConfig.getComponentName();
         Map<String, Object> csmap = new HashMap<>();
-        List<ConfigurationOverride> overrideList = updateApplicationConfig(appConfig, csmap, tierName, componentName, name, auditComponent);
+        List<ConfigProperty> cpList = getConfigServiceProperties(tierName, componentName, name, auditComponent);
+        List<ConfigurationOverride> overrideList = updateApplicationConfig(appConfig, cpList, csmap);
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
         MutablePropertySources sources = ce.getPropertySources();
         sources.replace(ApplicationConstants.PSN_CONFIG_SERVER_APPLICATION, new MapPropertySource(ApplicationConstants.PSN_CONFIG_SERVER_APPLICATION, csmap));
@@ -136,22 +135,27 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
 
         Map<String, Object> csmap = new HashMap<>();
         List<ConfigurationOverride> overrideList = new ArrayList<>();
+        List<ConfigProperty> cpList = new ArrayList<>();
+                
+
 
         // Get whatever Service Discovery info we need
         componentName = ApplicationConstants.COMPONENTNM_SERVICE_DISCOVERY;
-        overrideList.addAll(updateGlobalConfig(globalConfig, csmap, tierName, componentName, name, auditComponent));
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
 
         // Get whatever Kafka info we need
         componentName = ApplicationConstants.COMPONENTNM_MKT_KAFKA;
-        overrideList.addAll(updateGlobalConfig(globalConfig, csmap, tierName, componentName, name, auditComponent));
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
 
         // Get whatever Redis info we need
         componentName = ApplicationConstants.COMPONENTNM_AWS_REDIS;
-        overrideList.addAll(updateGlobalConfig(globalConfig, csmap, tierName, componentName, name, auditComponent));
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
 
         // Get whatever S3 Bucket info we need
         componentName = ApplicationConstants.COMPONENTNM_AWS_S3_BUCKETS;
-        overrideList.addAll(updateGlobalConfig(globalConfig, csmap, tierName, componentName, name, auditComponent));
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
+        
+        overrideList.addAll(updateGlobalConfig(globalConfig, cpList, csmap));
 
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
         MutablePropertySources sources = ce.getPropertySources();
@@ -159,11 +163,10 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         return overrideList;
     }
 
-    private List<ConfigurationOverride> updateGlobalConfig(Configuration config, Map<String, Object> csmap, String tierName, String componentName, String name,
-            String auditComponent) {
+    private List<ConfigurationOverride> updateGlobalConfig(Configuration config, List<ConfigProperty> cpList, Map<String, Object> csmap) {
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
         PropertySource<?> tierGlobalPropertySource = ce.getPropertySources().get(ApplicationConstants.PSN_TIER_GLOBAL_OVERRIDES);
-        List<ConfigProperty> cp = configClient.getProperties(tierName, componentName, name, auditComponent);
+
         // get the list of fields
         Class<?> c = config.getClass();
         Field[] fields = c.getDeclaredFields();
@@ -176,7 +179,7 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         HashMap<String, ConfigurationOverride> originalProperties = config.getOriginalProperties();
         HashMap<String, ConfigurationOverride> oldo = config.getOldOverrides();
         HashMap<String, ConfigurationOverride> newo = new HashMap<>();
-        for (ConfigProperty cps : cp) {
+        for (ConfigProperty cps : cpList) {
             String n = normalizeName(cps.getName());
             if (fieldMap.containsKey(n)) {
                 FType ftype = fieldMap.get(n);
@@ -202,9 +205,9 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
 
         for (String snew : keysNew) {
             ConfigurationOverride conew = newo.get(snew);
-            System.out.println("Checking: " + snew);
+//            System.out.println("Checking: " + snew);
             if (oldo.containsKey(snew)) {
-                System.out.println("found it in oldo");
+//                System.out.println("found it in oldo");
                 // in both the old and new overrides
                 ConfigurationOverride coold = oldo.get(snew);
                 if (coold.equals(conew))
@@ -220,9 +223,7 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         return updateList;
     }
 
-    private List<ConfigurationOverride> updateApplicationConfig(Configuration config, Map<String, Object> csmap, String tierName, String componentName,
-            String name, String auditComponent) {
-        List<ConfigProperty> cp = configClient.getProperties(tierName, componentName, name, auditComponent);
+    private List<ConfigurationOverride> updateApplicationConfig(Configuration config, List<ConfigProperty> cpList, Map<String, Object> csmap) {
         // get the list of fields
         Class<?> c = config.getClass();
         Field[] fields = c.getDeclaredFields();
@@ -237,7 +238,7 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         HashMap<String, ConfigurationOverride> newo = new HashMap<>();
         // System.out.println("number original props: " + orgo.size());
         // System.out.println("number of old overrides: " + oldo.size());
-        for (ConfigProperty cps : cp) {
+        for (ConfigProperty cps : cpList) {
             String n = normalizeName(cps.getName());
             if (fieldMap.containsKey(n)) {
                 FType ftype = fieldMap.get(n);
@@ -317,20 +318,20 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         return overrideList;
     }
 
-    public Map<String, Object> loadConfigServerProperties(Configuration config, String tierName, String componentName, String name, String auditComponent) {
+    public List<ConfigProperty> getConfigServiceProperties(String tierName, String componentName, String name, String auditComponent) {
+        // We'll pull the full list with one call to keep the load down on the config server (can throw a RuntimeException)
+        // TODO catch and log Runtime exception
+        List<ConfigProperty> cp = configClient.getProperties(tierName, componentName, name, auditComponent);
+        return cp;
+    }
+
+    public Map<String, Object> loadConfigServerProperties(Configuration config, List<ConfigProperty> cp) {
         // Well use this below for global properties only, to see if we have a tier global property override
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
         PropertySource<?> tierGlobalPropertySource = ce.getPropertySources().get(ApplicationConstants.PSN_TIER_GLOBAL_OVERRIDES);
 
-        // We'll pull the full list with one call to keep the load down on the config server (can throw a RuntimeException)
-        // TODO catch and log Runtime exception
-        List<ConfigProperty> cp = configClient.getProperties(tierName, componentName, name, auditComponent);
-
         // We'll store the values in our Configuration class but also as a PropertySource so we can tell *where* the property came from
         Map<String, Object> csmap = new HashMap<>();
-
-        // Store the original properties pre-config server hit:
-        HashMap<String, ConfigurationOverride> originalProperties = new HashMap<>();
 
         // The properties need to *relaxed-match* the field names in our Configuration class, get the fields:
         Class<?> c = config.getClass();
@@ -348,11 +349,11 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
                 if (object != null)
                     so = object.toString();
                 ConfigurationOverride co = new ConfigurationOverride(ftype.name, so, ftype.type, setMethod, getMethod);
-                originalProperties.put(ftype.name, co);
+                config.getOriginalProperties().put(ftype.name, co);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            config.setOriginalProperties(originalProperties);
+
         }
         // loop through all the properties we grabbed from the config service and see if any match
         for (ConfigProperty cps : cp) {
@@ -422,7 +423,10 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         String componentName = appConfig.getComponentName();
         String name = "";
         String auditComponent = appConfig.getComponentName();
-        Map<String, Object> csmap = loadConfigServerProperties(appConfig, tierName, componentName, name, auditComponent);
+
+        List<ConfigProperty> cpList = getConfigServiceProperties(tierName, componentName, name, auditComponent);
+
+        Map<String, Object> csmap = loadConfigServerProperties(appConfig, cpList);
 
         // We'll store the values in our ApplicationConfigProperties but also as a PropertySource so we can tell *where* the property came from
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
@@ -439,27 +443,32 @@ public class ConfigServiceRunner implements ApplicationRunner, Ordered {
         String componentName = "";
         String name = "";
         String auditComponent = appConfig.getComponentName();
-        Map<String, Object> csmap = new HashMap<>();
+
+        // Get whatever Service Discovery info we need
+        componentName = ApplicationConstants.COMPONENTNM_SERVICE_DISCOVERY;
+        List<ConfigProperty> cpList = getConfigServiceProperties(tierName, componentName, name, auditComponent);
+
+        // Get whatever Kafka info we need
+        componentName = ApplicationConstants.COMPONENTNM_MKT_KAFKA;
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
+
+        // Get whatever Redis info we need
+        componentName = ApplicationConstants.COMPONENTNM_AWS_REDIS;
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
+
+        // Get whatever S3 Bucket info we need
+        componentName = ApplicationConstants.COMPONENTNM_AWS_S3_BUCKETS;
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
+
+        // Get whatever Kafka info we need
+        componentName = ApplicationConstants.COMPONENTNM_MKT_KAFKA;
+        cpList.addAll(getConfigServiceProperties(tierName, componentName, name, auditComponent));
+
+        Map<String, Object> csmap = loadConfigServerProperties(globalConfig, cpList);
 
         // We'll store the values in our ApplicationConfigProperties but also as a PropertySource so we can tell *where* the property came from
         ConfigurableEnvironment ce = (ConfigurableEnvironment) env;
         MutablePropertySources sources = ce.getPropertySources();
-
-        // Get whatever Service Discovery info we need
-        componentName = ApplicationConstants.COMPONENTNM_SERVICE_DISCOVERY;
-        csmap.putAll(loadConfigServerProperties(globalConfig, tierName, componentName, name, auditComponent));
-
-        // Get whatever Kafka info we need
-        componentName = ApplicationConstants.COMPONENTNM_MKT_KAFKA;
-        csmap.putAll(loadConfigServerProperties(globalConfig, tierName, componentName, name, auditComponent));
-
-        // Get whatever Redis info we need
-        componentName = ApplicationConstants.COMPONENTNM_AWS_REDIS;
-        csmap.putAll(loadConfigServerProperties(globalConfig, tierName, componentName, name, auditComponent));
-
-        // Get whatever S3 Bucket info we need
-        componentName = ApplicationConstants.COMPONENTNM_AWS_S3_BUCKETS;
-        csmap.putAll(loadConfigServerProperties(globalConfig, tierName, componentName, name, auditComponent));
 
         // *NOTE ADDLAST* local properties for the global resources will override the
         // config server

@@ -1,5 +1,7 @@
 package com.bms.finnr.config;
 
+import java.util.HashMap;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -7,18 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:tier_global_overrides.properties")
 @ConfigurationProperties(prefix = "tier_global", ignoreUnknownFields=false, ignoreInvalidFields=false)
-public class GlobalConfiguration implements Configuration {
-	
+public class GlobalConfiguration extends Configuration {
+    
 	/*
 	 * tier_global_ovverides.properities should only be populated in development environments to 
 	 * do things like point to a locally running redis server vs the AWS redis cluster.  
 	 */
 	// Service Discovery
-	private String tenantServiceUrl;
+	private String mktTenantServiceUrl;
 	
 	// Redis
-	private String redisClusterHost;
-	private int redisClusterPort;
+	private String redisClusterPrimaryEndpoint;
+	private int redisClusterPrimaryEndpointPort;
 	
 	// S3 Buckets
 	private String dataBucketTopic;
@@ -31,23 +33,31 @@ public class GlobalConfiguration implements Configuration {
 	// Kafka
 	private String topicRawEvents;
 	private String topicEnhancedEvents;
-	public String getTenantServiceUrl() {
-		return tenantServiceUrl;
+	private String version;
+
+	public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    public String getMktTenantServiceUrl() {
+		return mktTenantServiceUrl;
 	}
-	public void setTenantServiceUrl(String tenantServiceUrl) {
-		this.tenantServiceUrl = tenantServiceUrl;
+	public void setMktTenantServiceUrl(String mktTenantServiceUrl) {
+		this.mktTenantServiceUrl = mktTenantServiceUrl;
 	}
-	public String getRedisClusterHost() {
-		return redisClusterHost;
+	public String getRedisClusterPrimaryEndpoint() {
+		return redisClusterPrimaryEndpoint;
 	}
-	public void setRedisClusterHost(String redisClusterHost) {
-		this.redisClusterHost = redisClusterHost;
+	public void setRedisClusterPrimaryEndpoint(String redisClusterPrimaryEndpoint) {
+		this.redisClusterPrimaryEndpoint = redisClusterPrimaryEndpoint;
 	}
-	public int getRedisClusterPort() {
-		return redisClusterPort;
+	public int getRedisClusterPrimaryEndpointPort() {
+		return redisClusterPrimaryEndpointPort;
 	}
-	public void setRedisClusterPort(int redisClusterPort) {
-		this.redisClusterPort = redisClusterPort;
+	public void setRedisClusterPrimaryEndpointPort(int redisClusterPrimaryEndpointPort) {
+		this.redisClusterPrimaryEndpointPort = redisClusterPrimaryEndpointPort;
 	}
 	public String getDataBucketTopic() {
 		return dataBucketTopic;
@@ -97,13 +107,13 @@ public class GlobalConfiguration implements Configuration {
 	public void setTopicEnhancedEvents(String topicEnhancedEvents) {
 		this.topicEnhancedEvents = topicEnhancedEvents;
 	}
-	@Override
-	public String toString() {
-		return "GlobalConfiguration [tenantServiceUrl=" + tenantServiceUrl + ", redisClusterHost=" + redisClusterHost
-				+ ", redisClusterPort=" + redisClusterPort + ", dataBucketTopic=" + dataBucketTopic + ", configBucket="
-				+ configBucket + ", dataBucket=" + dataBucket + ", deploymentBucket=" + deploymentBucket
-				+ ", opsBucket=" + opsBucket + ", testBucket=" + testBucket + ", topicRawEvents=" + topicRawEvents
-				+ ", topicEnhancedEvents=" + topicEnhancedEvents + "]";
-	}
-	
+    @Override
+    public String toString() {
+        return "GlobalConfiguration [mktTenantServiceUrl=" + mktTenantServiceUrl + ", redisClusterPrimaryEndpoint=" + redisClusterPrimaryEndpoint
+                + ", redisClusterPrimaryEndpointPort=" + redisClusterPrimaryEndpointPort + ", dataBucketTopic=" + dataBucketTopic + ", configBucket="
+                + configBucket + ", dataBucket=" + dataBucket + ", deploymentBucket=" + deploymentBucket + ", opsBucket=" + opsBucket + ", testBucket="
+                + testBucket + ", topicRawEvents=" + topicRawEvents + ", topicEnhancedEvents=" + topicEnhancedEvents + ", version=" + version + "]";
+    }
+
+
 }

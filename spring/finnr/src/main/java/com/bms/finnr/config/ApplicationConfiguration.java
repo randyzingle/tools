@@ -1,5 +1,7 @@
 package com.bms.finnr.config;
 
+import java.util.HashMap;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -10,13 +12,13 @@ import org.springframework.validation.annotation.Validated;
 @Component
 @Validated
 @ConfigurationProperties(prefix="application", ignoreUnknownFields=false, ignoreInvalidFields=false)
-public class ApplicationConfiguration implements Configuration {
-
-	private String componentName; // name of the application = gitlab repo name
+public class ApplicationConfiguration extends Configuration {
+   
+    private String componentName; // name of the application = gitlab repo name
 	private String handlerChain;
 	private String consumerGroup;
 	private boolean readFromStart;
-	private Boolean geoAutoReload;
+	private boolean geoAutoReload;
 	private String sourceTopic;
 	private String destinationTopic;
 	private String tierName; // name of the tier we are deploying to
@@ -24,7 +26,7 @@ public class ApplicationConfiguration implements Configuration {
 	private boolean useRedisConfig;
 	@NotNull
 	private String configServiceUrl;
-	@Min(30000) // don't hit config server more than once per 30 secs
+//	@Min(60000) // don't hit config server more than once per 60 secs
 	private int configServerPingRateMs;
 	
 	public String getComponentName() {
@@ -51,10 +53,10 @@ public class ApplicationConfiguration implements Configuration {
 	public void setReadFromStart(boolean readFromStart) {
 		this.readFromStart = readFromStart;
 	}
-	public Boolean isGeoAutoReload() {
+	public boolean isGeoAutoReload() {
 		return geoAutoReload;
 	}
-	public void setGeoAutoReload(Boolean geoAutoReload) {
+	public void setGeoAutoReload(boolean geoAutoReload) {
 		this.geoAutoReload = geoAutoReload;
 	}
 	public String getSourceTopic() {
@@ -108,7 +110,5 @@ public class ApplicationConfiguration implements Configuration {
 				+ useRedisConfig + ", configServiceUrl=" + configServiceUrl + ", configServerPingRateMs="
 				+ configServerPingRateMs + "]";
 	}
-	
-	
-	
+
 }

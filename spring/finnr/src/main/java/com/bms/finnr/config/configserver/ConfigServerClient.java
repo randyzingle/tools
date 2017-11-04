@@ -29,17 +29,17 @@ public class ConfigServerClient {
 	String auditComponent = "baldur";
 
 	public static void main(String[] args) {
-		String tierName = "razing";
-		String componentName = "mkt-events";	
-		String name = "readFromStart";
-		String value = "true";
+		String tierName = "";
+		String componentName = "";	
+		String name = "mkt-tenant.service_URL";
+		String value = "";
 			
 		ConfigServerClient cc = new ConfigServerClient();
 		cc.appProps = new ApplicationConfiguration();
 		cc.appProps.setConfigServiceUrl("http://configservice-dev.cidev.sas.us:8080/");
 		
-		// create a new property
-		cc.createSomeProps(tierName, componentName, name, value);
+//		// create a new property
+//		cc.createSomeProps(tierName, componentName, name, value);
 		
 		// read the property back from the CS and print it out
 		cc.readSomeProps(tierName, componentName, name, value);
@@ -84,11 +84,12 @@ public class ConfigServerClient {
 		System.out.println("HTTP query time: " + (endTime - startTime) + " ms");
 		int count=0;
 		for (ConfigProperty cp : props) {
+			if (cp.getComponentNm().startsWith("mkt-backup")) continue;
 			count++;
 			System.out.println(count + ": " + cp);
 		}
 		System.out.println();
-		printIdUrl(props);
+//		printIdUrl(props);
 	}
 	// END TEST METHODS
 	
@@ -189,7 +190,7 @@ public class ConfigServerClient {
 				new ParameterizedTypeReference<ResourceCollection<ConfigProperty>>() {
 				});
 		ResourceCollection<ConfigProperty> collection = responseEntity.getBody();
-		System.out.println("Found " + collection.count + " items.");
+//		System.out.println("Found " + collection.count + " items.");
 		props = collection.items;
 
 		return props;

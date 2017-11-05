@@ -1,0 +1,64 @@
+{
+  "application":
+  {"title" : "Application-Specific Configuration"},
+  "items" :
+  [
+    {
+      "name": "sourceTopic",
+      "value": "sourceTopic-systemproperties",
+      "source": "x-config"
+    },
+    {
+      "name": "destinationTopic",
+      "value": "destination-topic-ENV_VARIABLE",
+      "source": "x-config"
+    }
+    {
+      "name": "useRedisConfig",
+      "value": "y-config",
+      "source": "x-config"
+    },
+    {
+      "name": "configServerPingRateMs",
+      "value": "60000",
+      "source": "x-config"
+    },
+    {
+      "name": "geoAutoReload",
+      "value": "x-config",
+      "source": "x-config"
+    },
+    {
+      "name": "tierName",
+      "value": "razing",
+      "source": "x-config"
+    },
+    {
+      "name": "kafkaTopicPrefix",
+      "value": "razing",
+      "source": "x-config"
+    }
+],
+  "global": [
+    {
+      "name": "redisClusterPrimaryEndpoint",
+      "value": "localhost",
+      "source": "x-config"
+    },
+    {
+      "name": "redisClusterPrimaryEndpointPort",
+      "value": "6379",
+      "source": "x-config"
+    },
+    {
+      "name": "configBucket",
+      "value": "ci-360-config-dev-us-east-1",
+      "source": "x-config"
+    },
+    {
+      "name": "dataBucket",
+      "value": "ci-360-data-dev-us-east-1",
+      "source": "x-config"
+    }
+  ]
+}

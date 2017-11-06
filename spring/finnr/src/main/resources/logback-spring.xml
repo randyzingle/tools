@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration>
+  <springProperty scope="context" name="LOG_DIR" source="logging.path" />
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <!--No layout specified for appender named [console] of class [org.apache.log4j.ConsoleAppender]-->
+    <encoder>
+      <pattern>%d{ISO8601} %-5p [%-15.15t] %-60.60c - %m%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!-- logback seems to choke on relative paths so specify full path -->
+    <file>${LOG_DIR}/service.log</file>
+    <append>true</append>
+    <encoder>
+      <pattern>%d{ISO8601} %-5p [%-15.15t] %-40.60c - %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>${LOG_DIR}/service.%i.log</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>10MB</maxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <logger name="com.bms" level="INFO" additivity="false">
+    <appender-ref ref="console"/>
+    <appender-ref ref="file"/>
+  </logger>
+  <logger name="org.springframework" level="INFO" additivity="false">
+    <appender-ref ref="console"/>
+    <appender-ref ref="file"/>
+  </logger>
+  <root level="INFO">
+    <appender-ref ref="console"/>
+    <appender-ref ref="file"/>
+  </root>
+</configuration>

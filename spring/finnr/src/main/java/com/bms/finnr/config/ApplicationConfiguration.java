@@ -26,7 +26,7 @@ public class ApplicationConfiguration extends Configuration {
 	private boolean useRedisConfig;
 	@NotNull
 	private String configServiceUrl;
-//	@Min(60000) // don't hit config server more than once per 60 secs
+	@Min(60000) // don't hit config server more than once per 60 secs
 	private int configServerPingRateMs;
 	
 	public String getComponentName() {

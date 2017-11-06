@@ -1,64 +1,138 @@
 {
-  "application":
-  {"title" : "Application-Specific Configuration"},
-  "items" :
-  [
-    {
-      "name": "sourceTopic",
-      "value": "sourceTopic-systemproperties",
-      "source": "x-config"
-    },
-    {
-      "name": "destinationTopic",
-      "value": "destination-topic-ENV_VARIABLE",
-      "source": "x-config"
-    }
-    {
-      "name": "useRedisConfig",
-      "value": "y-config",
-      "source": "x-config"
-    },
-    {
-      "name": "configServerPingRateMs",
-      "value": "60000",
-      "source": "x-config"
-    },
-    {
-      "name": "geoAutoReload",
-      "value": "x-config",
-      "source": "x-config"
-    },
-    {
-      "name": "tierName",
-      "value": "razing",
-      "source": "x-config"
-    },
-    {
-      "name": "kafkaTopicPrefix",
-      "value": "razing",
-      "source": "x-config"
-    }
-],
-  "global": [
-    {
-      "name": "redisClusterPrimaryEndpoint",
-      "value": "localhost",
-      "source": "x-config"
-    },
-    {
-      "name": "redisClusterPrimaryEndpointPort",
-      "value": "6379",
-      "source": "x-config"
-    },
-    {
-      "name": "configBucket",
-      "value": "ci-360-config-dev-us-east-1",
-      "source": "x-config"
-    },
-    {
-      "name": "dataBucket",
-      "value": "ci-360-data-dev-us-east-1",
-      "source": "x-config"
-    }
-  ]
+  "component": "mkt-events",
+  "application": {
+    "title": "Application-Specific Configuration",
+    "items": [
+      {
+        "name": "componentName",
+        "value": "mkt-events",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "configServerPingRateMs",
+        "value": "60000",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "configServiceUrl",
+        "value": "http://configservice-dev.cidev.sas.us:8080/",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "consumerGroup",
+        "value": "RawEventsEnrichmentReader",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "destinationTopic",
+        "value": "destination-topic-ENV_VARIABLE",
+        "source": "systemEnvironment"
+      },
+      {
+        "name": "geoAutoReload",
+        "value": "false",
+        "source": "CONFIG_SERVER_APPLICATION"
+      },
+      {
+        "name": "handlerChain",
+        "value": "mymir",
+        "source": "CONFIG_SERVER_APPLICATION"
+      },
+      {
+        "name": "kafkaTopicPrefix",
+        "value": "razing",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "readFromStart",
+        "value": "false",
+        "source": "CONFIG_SERVER_APPLICATION"
+      },
+      {
+        "name": "sourceTopic",
+        "value": "sourceTopic-systemproperties",
+        "source": "systemProperties"
+      },
+      {
+        "name": "tierName",
+        "value": "razing",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      },
+      {
+        "name": "useRedisConfig",
+        "value": "false",
+        "source": "applicationConfig: [classpath:/application.properties]"
+      }
+    ]
+  },
+  "global": {
+    "title": "Tier-Global Configuration",
+    "items": [
+      {
+        "name": "configBucket",
+        "value": "ci-360-config-dev-us-east-1",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "dataBucket",
+        "value": "ci-360-data-dev-us-east-1",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "dataBucketTopic",
+        "value": "arn:aws:sns:us-east-1:952478859445:dev-buckets-DataBucketTopic-YMH3LFD8S2N6",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "deploymentBucket",
+        "value": "ci-360-deployment-dev-us-east-1",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "destinationTopic",
+        "value": "destination-topic-ENV_VARIABLE",
+        "source": "systemEnvironment"
+      },
+      {
+        "name": "mktTenantServiceUrl",
+        "value": "http://tenantservice-dev.cidev.sas.us:8080/tenantService",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "opsBucket",
+        "value": "ci-360-ops-dev-us-east-1",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "redisClusterPrimaryEndpoint",
+        "value": "localhost",
+        "source": "class path resource [tier_global_overrides.properties]"
+      },
+      {
+        "name": "redisClusterPrimaryEndpointPort",
+        "value": "6379",
+        "source": "class path resource [tier_global_overrides.properties]"
+      },
+      {
+        "name": "sasMktKafkaSchemaRegistry",
+        "value": "kafka-schema-registry.cidev.sas.us",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "sourceTopic",
+        "value": "sourceTopic-systemproperties",
+        "source": "systemProperties"
+      },
+      {
+        "name": "testBucket",
+        "value": "ci-360-test-dev-us-east-1",
+        "source": "CONFIG_SERVER_GLOBAL"
+      },
+      {
+        "name": "version",
+        "value": "0.10.0.2",
+        "source": "CONFIG_SERVER_GLOBAL"
+      }
+    ]
+  }
 }

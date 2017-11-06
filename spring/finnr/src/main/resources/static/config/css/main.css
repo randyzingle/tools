@@ -1,5 +1,6 @@
 
 #main-content {
+  /*
     max-width: 940px;
     padding: 2em 3em;
     margin: 0 auto 20px;
@@ -8,10 +9,15 @@
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    */
 
     transform: scale(.75);
     -ms-transform: scale(.75); /* IE 9 */
     -webkit-transform: scale(.75); /* Safari and Chrome */
     -o-transform: scale(.75); /* Opera */
     -moz-transform: scale(.75); /* Firefox */
+}
+
+.green {
+	background-color: #ADDFAD;
 }

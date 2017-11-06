@@ -33,81 +33,80 @@ public class GlobalConfiguration extends Configuration {
 	// Kafka
 	private String topicRawEvents;
 	private String topicEnhancedEvents;
-	private String version;
+	private String kafkaVersion;
 	private String sasMktKafkaSchemaRegistry;
-
-	public String getVersion() {
-        return version;
-    }
-    public void setVersion(String version) {
-        this.version = version;
-    }
     public String getMktTenantServiceUrl() {
-		return mktTenantServiceUrl;
-	}
-	public void setMktTenantServiceUrl(String mktTenantServiceUrl) {
-		this.mktTenantServiceUrl = mktTenantServiceUrl;
-	}
-	public String getRedisClusterPrimaryEndpoint() {
-		return redisClusterPrimaryEndpoint;
-	}
-	public void setRedisClusterPrimaryEndpoint(String redisClusterPrimaryEndpoint) {
-		this.redisClusterPrimaryEndpoint = redisClusterPrimaryEndpoint;
-	}
-	public int getRedisClusterPrimaryEndpointPort() {
-		return redisClusterPrimaryEndpointPort;
-	}
-	public void setRedisClusterPrimaryEndpointPort(int redisClusterPrimaryEndpointPort) {
-		this.redisClusterPrimaryEndpointPort = redisClusterPrimaryEndpointPort;
-	}
-	public String getDataBucketTopic() {
-		return dataBucketTopic;
-	}
-	public void setDataBucketTopic(String dataBucketTopic) {
-		this.dataBucketTopic = dataBucketTopic;
-	}
-	public String getConfigBucket() {
-		return configBucket;
-	}
-	public void setConfigBucket(String configBucket) {
-		this.configBucket = configBucket;
-	}
-	public String getDataBucket() {
-		return dataBucket;
-	}
-	public void setDataBucket(String dataBucket) {
-		this.dataBucket = dataBucket;
-	}
-	public String getDeploymentBucket() {
-		return deploymentBucket;
-	}
-	public void setDeploymentBucket(String deploymentBucket) {
-		this.deploymentBucket = deploymentBucket;
-	}
-	public String getOpsBucket() {
-		return opsBucket;
-	}
-	public void setOpsBucket(String opsBucket) {
-		this.opsBucket = opsBucket;
-	}
-	public String getTestBucket() {
-		return testBucket;
-	}
-	public void setTestBucket(String testBucket) {
-		this.testBucket = testBucket;
-	}
-	public String getTopicRawEvents() {
-		return topicRawEvents;
-	}
-	public void setTopicRawEvents(String topicRawEvents) {
-		this.topicRawEvents = topicRawEvents;
-	}
-	public String getTopicEnhancedEvents() {
-		return topicEnhancedEvents;
-	}
-	public void setTopicEnhancedEvents(String topicEnhancedEvents) {
-		this.topicEnhancedEvents = topicEnhancedEvents;
-	}
+        return mktTenantServiceUrl;
+    }
+    public void setMktTenantServiceUrl(String mktTenantServiceUrl) {
+        this.mktTenantServiceUrl = mktTenantServiceUrl;
+    }
+    public String getRedisClusterPrimaryEndpoint() {
+        return redisClusterPrimaryEndpoint;
+    }
+    public void setRedisClusterPrimaryEndpoint(String redisClusterPrimaryEndpoint) {
+        this.redisClusterPrimaryEndpoint = redisClusterPrimaryEndpoint;
+    }
+    public int getRedisClusterPrimaryEndpointPort() {
+        return redisClusterPrimaryEndpointPort;
+    }
+    public void setRedisClusterPrimaryEndpointPort(int redisClusterPrimaryEndpointPort) {
+        this.redisClusterPrimaryEndpointPort = redisClusterPrimaryEndpointPort;
+    }
+    public String getDataBucketTopic() {
+        return dataBucketTopic;
+    }
+    public void setDataBucketTopic(String dataBucketTopic) {
+        this.dataBucketTopic = dataBucketTopic;
+    }
+    public String getConfigBucket() {
+        return configBucket;
+    }
+    public void setConfigBucket(String configBucket) {
+        this.configBucket = configBucket;
+    }
+    public String getDataBucket() {
+        return dataBucket;
+    }
+    public void setDataBucket(String dataBucket) {
+        this.dataBucket = dataBucket;
+    }
+    public String getDeploymentBucket() {
+        return deploymentBucket;
+    }
+    public void setDeploymentBucket(String deploymentBucket) {
+        this.deploymentBucket = deploymentBucket;
+    }
+    public String getOpsBucket() {
+        return opsBucket;
+    }
+    public void setOpsBucket(String opsBucket) {
+        this.opsBucket = opsBucket;
+    }
+    public String getTestBucket() {
+        return testBucket;
+    }
+    public void setTestBucket(String testBucket) {
+        this.testBucket = testBucket;
+    }
+    public String getTopicRawEvents() {
+        return topicRawEvents;
+    }
+    public void setTopicRawEvents(String topicRawEvents) {
+        this.topicRawEvents = topicRawEvents;
+    }
+    public String getTopicEnhancedEvents() {
+        return topicEnhancedEvents;
+    }
+    public void setTopicEnhancedEvents(String topicEnhancedEvents) {
+        this.topicEnhancedEvents = topicEnhancedEvents;
+    }
+    public String getKafkaVersion() {
+        return kafkaVersion;
+    }
+    public void setKafkaVersion(String kafkaVersion) {
+        this.kafkaVersion = kafkaVersion;
+    }
     public String getSasMktKafkaSchemaRegistry() {
         return sasMktKafkaSchemaRegistry;
     }
@@ -119,7 +118,7 @@ public class GlobalConfiguration extends Configuration {
         return "GlobalConfiguration [mktTenantServiceUrl=" + mktTenantServiceUrl + ", redisClusterPrimaryEndpoint=" + redisClusterPrimaryEndpoint
                 + ", redisClusterPrimaryEndpointPort=" + redisClusterPrimaryEndpointPort + ", dataBucketTopic=" + dataBucketTopic + ", configBucket="
                 + configBucket + ", dataBucket=" + dataBucket + ", deploymentBucket=" + deploymentBucket + ", opsBucket=" + opsBucket + ", testBucket="
-                + testBucket + ", topicRawEvents=" + topicRawEvents + ", topicEnhancedEvents=" + topicEnhancedEvents + ", version=" + version
+                + testBucket + ", topicRawEvents=" + topicRawEvents + ", topicEnhancedEvents=" + topicEnhancedEvents + ", kafkaVersion=" + kafkaVersion
                 + ", sasMktKafkaSchemaRegistry=" + sasMktKafkaSchemaRegistry + "]";
     }
 

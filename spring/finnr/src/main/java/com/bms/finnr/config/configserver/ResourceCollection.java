@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class ResourceCollection<T> implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * String representation of the base media type value; "application/vnd.sas.collection"
      */

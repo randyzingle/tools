@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="configApp">
 <head>
-    <title>TO DO List</title>
+    <title>Application Properties</title>
     <link href="css/lib/bootstrap.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet">
 </head>
@@ -10,11 +10,11 @@
         <h1>Configuration Data</h1>
     </div>
     <div class="panel" ng-controller="ConfigCtrl">
-        <h4>{{config.application.title}}</h4>
+        <h4>{{props.application.title}}</h4>
         <table class="table table-striped">
             <thead>
                 <tr><th>Name</th><th>Value</th><th>Source</th></tr>
-                <tr ng-repeat="item in config.application.items">
+                <tr ng-repeat="item in props.application.items">
                   <td>{{item.name}}</td>
                   <td>{{item.value}}</td>
                   <td>{{item.source}}</td>
@@ -22,11 +22,11 @@
             <tbody>
             </tbody>
         </table>
-        <h4>{{config.global.title}}</h4>
+        <h4>{{props.global.title}}</h4>
         <table class="table table-striped">
             <thead>
                 <tr><th>Name</th><th>Value</th><th>Source</th></tr>
-                <tr ng-repeat="item in config.global.items">
+                <tr ng-repeat="item in props.global.items">
                   <td>{{item.name}}</td>
                   <td>{{item.value}}</td>
                   <td>{{item.source}}</td>
@@ -36,7 +36,7 @@
         </table>
         <div class="input-group">
             <span class="input-group-btn">
-                <button class="btn btn-default">Update</button>
+                <button class="btn btn-default" ng-click="getProps()">Update</button>
             </span>
         </div>
     </div>

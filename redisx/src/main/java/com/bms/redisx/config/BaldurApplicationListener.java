@@ -27,7 +27,10 @@ import com.bms.redisx.config.ws.RedisPropertyListener;
  * 
  * Defaults for ALL application specific properties are given in application.properties. These will be overridden 
  * by environment variables, system properties, and configuration server values (for the given tierNm and componentNm).
- * The order of precedence for properties is (top one wins):
+ * We are assuming that values for application-specific properties are only set as overrides or features flags which is
+ * why that have top precedence. 
+ * 
+ * The order of precedence for properties as a list (top one wins):
  * <ol>
  * <li>Configuration Server value</li>
  * <li>System Property (-Dname=value pair given on java command line)</li>

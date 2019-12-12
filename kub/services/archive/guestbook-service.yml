@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: guestbook
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-06fbb55190b56b931"
+    service.beta.kubernetes.io/aws-load-balancer-type: "alb"
+  labels:
+    app: guestbook
+spec:
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: http-server
+  selector:
+    app: guestbook
+  type: LoadBalancer

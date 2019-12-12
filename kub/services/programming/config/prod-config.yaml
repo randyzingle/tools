@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: baldur
+  namespace: prod
+data:
+    baldur: "baldur in formal wear"
+    mymir: "mymir in formal wear"
+    butters_age: "12"
+    butters_oldest: "true"
+    color: "blue"
+    temp: "cool"

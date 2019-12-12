@@ -1,0 +1,356 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Kubernetes Cluster for SAS CI TNG",
+  "Parameters": {
+    "Owner": {
+      "Description": "Owner of the Kubernetes Cluster",
+      "Default": "razing",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "AdminEmail": {
+      "Description": "Email of the person who is creating the stack",
+      "Type": "String",
+      "Default": "randall.zingle@sas.com",
+      "MinLength": "3",
+      "ConstraintDescription": "valid email address"
+    },
+    "TierName": {
+      "Type": "String",
+      "Description": "Tier Name / Stack Prefix.",
+      "Default": "baldur"
+    },
+    "KeyPairName": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Description": "Name of an existing EC2 KeyPair. Instances will launch with this KeyPair.",
+      "MinLength": "1",
+      "Default": "ci-it-tng",
+      "MaxLength": "64",
+      "AllowedPattern": "[-_ a-zA-Z0-9]*",
+      "ConstraintDescription": "Can contain only alphanumeric characters, spaces, dashes and underscores."
+    },
+    "NodeAMI": {
+      "Type": "AWS::EC2::Image::Id",
+      "Description": "Amazon Linux 2 AMI",
+      "Default": "ami-0b69ea66ff7391e80"
+    },
+    "VpcID": {
+      "Description": "The ID of the VPC (e.g. vpc-27c11543)",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "PrivateSubnet1": {
+      "Description": "The Subnet to create the Kubernetes instance in (e.g. subnet-00ecb52b)",
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "AvailabilityZone1": {
+      "Description": "The Availability Zone to create the Kubernetes instance in, must match PrivateSubnet1, (e.g. us-east-1b)",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
+    },
+    "PrivateSubnet2": {
+      "Description": "The Subnet to create the Kubernetes instance in (e.g. subnet-00ecb52b)",
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "AvailabilityZone2": {
+      "Description": "The Availability Zone to create the Kubernetes instance in, must match PrivateSubnet2, (e.g. us-east-1b)",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
+    },
+    "CIDomainName": {
+      "Description": "Base domain name for CI 360 for Route53.",
+      "Type": "String",
+      "Default": "cidev.sas.us"
+    },
+    "KubernetesInstanceType": {
+      "Description": "The type of node to be provisioned",
+      "Type": "String",
+      "Default": "t3a.medium"
+    },
+    "KubernetesVersion": {
+      "Description": "The version of Kubernetes being installed (e.g. 2.2.1)",
+      "Default": "2.2.1",
+      "Type": "String"
+    },
+    "CIAssetsBucket": {
+      "Type": "String",
+      "ConstraintDescription": "The S3 Bucket that contains the Kubernetes binaries and installation scripts",
+      "Default": "ci-360-deployment-dev-us-east-1"
+    },
+    "S3KubernetesAssetsPath": {
+      "Type": "String",
+      "ConstraintDescription": "The path of the S3 directory that contains the Kubernetes binaries and installation scripts",
+      "Default": "shared/kubernetes"
+    }
+  },
+  "Metadata": {
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Label": {
+            "default": "Admin Information"
+          },
+          "Parameters": [
+            "Owner",
+            "AdminEmail",
+            "KeyPairName",
+            "TierName"
+          ]
+        },
+        {
+          "Label": {
+            "default": "Network"
+          },
+          "Parameters": [
+            "VpcID",
+            "PrivateSubnet1",
+            "AvailabilityZone1",
+            "PrivateSubnet2",
+            "AvailabilityZone2",
+            "CIDomainName"
+          ]
+        },
+        {
+          "Label": {
+            "default": "Environment"
+          },
+          "Parameters": [
+            "CIAssetsBucket",
+            "S3KubernetesAssetsPath"
+          ]
+        },
+        {
+          "Label": {
+            "default": "Kubernetes"
+          },
+          "Parameters": [
+            "KubernetesInstanceType",
+            "KubernetesVersion",
+            "NodeAMI"
+          ]
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "BaseSecurity": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Owner": {
+            "Ref": "Owner"
+          },
+          "AdminEmail": {
+            "Ref": "AdminEmail"
+          },
+          "TierName": {
+            "Ref": "TierName"
+          },
+          "VpcID": {
+            "Ref": "VpcID"
+          },
+          "CIAssetsBucket": {
+            "Ref": "CIAssetsBucket"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              "https://s3.amazonaws.com",
+              {
+                "Ref": "CIAssetsBucket"
+              },
+              {
+                "Ref": "S3KubernetesAssetsPath"
+              },
+              "kubernetes-security.json"
+            ]
+          ]
+        }
+      }
+    },
+    "KubernetesNode1": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Owner": {
+            "Ref": "Owner"
+          },
+          "AdminEmail": {
+            "Ref": "AdminEmail"
+          },
+          "TierName": {
+            "Ref": "TierName"
+          },
+          "KeyPairName": {
+            "Ref": "KeyPairName"
+          },
+          "Subnet": {
+            "Ref": "PrivateSubnet1"
+          },
+          "AvailabilityZone": {
+            "Ref": "AvailabilityZone1"
+          },
+          "CIDomainName": {
+            "Ref": "CIDomainName"
+          },
+          "NodeAMI": {
+            "Ref": "NodeAMI"
+          },
+          "KubernetesInstanceType": {
+            "Ref": "KubernetesInstanceType"
+          },
+          "S3KubernetesAssetsPath": {
+            "Ref": "S3KubernetesAssetsPath"
+          },
+          "CIAssetsBucket": {
+            "Ref": "CIAssetsBucket"
+          },
+          "BaseSecurityStack": {
+            "Ref": "BaseSecurity"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              "https://s3.amazonaws.com",
+              {
+                "Ref": "CIAssetsBucket"
+              },
+              {
+                "Ref": "S3KubernetesAssetsPath"
+              },
+              "nodes.json"
+            ]
+          ]
+        }
+      }
+    },
+    "KubernetesNode2": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Owner": {
+            "Ref": "Owner"
+          },
+          "AdminEmail": {
+            "Ref": "AdminEmail"
+          },
+          "TierName": {
+            "Ref": "TierName"
+          },
+          "KeyPairName": {
+            "Ref": "KeyPairName"
+          },
+          "Subnet": {
+            "Ref": "PrivateSubnet1"
+          },
+          "AvailabilityZone": {
+            "Ref": "AvailabilityZone1"
+          },
+          "CIDomainName": {
+            "Ref": "CIDomainName"
+          },
+          "NodeAMI": {
+            "Ref": "NodeAMI"
+          },
+          "KubernetesInstanceType": {
+            "Ref": "KubernetesInstanceType"
+          },
+          "S3KubernetesAssetsPath": {
+            "Ref": "S3KubernetesAssetsPath"
+          },
+          "CIAssetsBucket": {
+            "Ref": "CIAssetsBucket"
+          },
+          "BaseSecurityStack": {
+            "Ref": "BaseSecurity"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              "https://s3.amazonaws.com",
+              {
+                "Ref": "CIAssetsBucket"
+              },
+              {
+                "Ref": "S3KubernetesAssetsPath"
+              },
+              "nodes.json"
+            ]
+          ]
+        }
+      }
+    },
+    "KubernetesNode3": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "Parameters": {
+          "Owner": {
+            "Ref": "Owner"
+          },
+          "AdminEmail": {
+            "Ref": "AdminEmail"
+          },
+          "TierName": {
+            "Ref": "TierName"
+          },
+          "KeyPairName": {
+            "Ref": "KeyPairName"
+          },
+          "Subnet": {
+            "Ref": "PrivateSubnet2"
+          },
+          "AvailabilityZone": {
+            "Ref": "AvailabilityZone2"
+          },
+          "CIDomainName": {
+            "Ref": "CIDomainName"
+          },
+          "NodeAMI": {
+            "Ref": "NodeAMI"
+          },
+          "KubernetesInstanceType": {
+            "Ref": "KubernetesInstanceType"
+          },
+          "S3KubernetesAssetsPath": {
+            "Ref": "S3KubernetesAssetsPath"
+          },
+          "CIAssetsBucket": {
+            "Ref": "CIAssetsBucket"
+          },
+          "BaseSecurityStack": {
+            "Ref": "BaseSecurity"
+          }
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "/",
+            [
+              "https://s3.amazonaws.com",
+              {
+                "Ref": "CIAssetsBucket"
+              },
+              {
+                "Ref": "S3KubernetesAssetsPath"
+              },
+              "nodes.json"
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "BaseSecurityStack": {
+      "Description": "Stack that creates Security Groups and Instance Profiles",
+      "Value": {
+        "Ref": "BaseSecurity"
+      }
+    }
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Kafka Cluster Security Groups for SAS CI TNG",
+  "Parameters": {
+    "Owner": {
+      "Description": "Owner of the Kafka Cluster",
+      "Type": "String",
+      "Default": "razing",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "AdminEmail": {
+      "Description": "Email of the person who is creating the stack",
+      "Type": "String",
+      "MinLength": "3",
+      "ConstraintDescription": "valid email address"
+    },
+    "TierName": {
+      "Description": "The name of the tier the instance belongs",
+      "Type": "String",
+      "Default": "kafka",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "VpcID": {
+      "Description": "The ID of the VPC",
+      "Type": "String",
+      "Default": "vpc-27c11543"
+    },
+    "CIAssetsBucket": {
+      "Description": "The S3 bucket containing cloudformation scripts and executables",
+      "Type": "String",
+      "Default": "ci-360-deployment-dev-us-east-1"
+    }
+  },
+  "Resources": {
+    "BaseSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Base Security group for the shared Kafka cluster.",
+        "VpcId": {
+          "Ref": "VpcID"
+        },
+        "Tags": [
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "BaseSecurityGroup"
+          },
+          {
+            "Key": "resourceowner",
+            "Value": {
+              "Ref": "Owner"
+            }
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "10.0.0.0/8"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "172.16.0.0/12"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "10.0.0.0/8"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "172.16.0.0/12"
+          },
+          {
+            "IpProtocol": "icmp",
+            "ToPort": "-1",
+            "FromPort": "-1",
+            "CidrIp": "10.0.0.0/8"
+          },
+          {
+            "IpProtocol": "icmp",
+            "ToPort": "-1",
+            "FromPort": "-1",
+            "CidrIp": "172.16.0.0/12"
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "KubernetesSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": [
+        "BaseSecurityGroup"
+      ],
+      "Properties": {
+        "GroupDescription": "Security group for the Kubernetes cluster.",
+        "VpcId": {
+          "Ref": "VpcID"
+        },
+        "Tags": [
+          {
+            "Key": "Application",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          },
+          {
+            "Key": "Name",
+            "Value": "KubernetesSecurityGroup"
+          },
+          {
+            "Key": "resourceowner",
+            "Value": {
+              "Ref": "Owner"
+            }
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "2379",
+            "ToPort": "10252",
+            "CidrIp": "10.0.0.0/8"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "2379",
+            "ToPort": "10252",
+            "CidrIp": "172.16.0.0/12"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "1",
+            "ToPort": "65535",
+            "SourceSecurityGroupId": {
+              "Ref": "BaseSecurityGroup"
+            }
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "1",
+            "ToPort": "65535",
+            "DestinationSecurityGroupId": {
+              "Ref": "BaseSecurityGroup"
+            }
+          },
+          {
+            "IpProtocol": "udp",
+            "FromPort": "1",
+            "ToPort": "65535",
+            "DestinationSecurityGroupId": {
+              "Ref": "BaseSecurityGroup"
+            }
+          }
+        ]
+      }
+    },
+    "KubernetesLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "RetentionInDays": 3
+      }
+    },
+    "KubernetesRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "CloudWatchMetrics",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "Stmt1439207556000",
+                  "Effect": "Allow",
+                  "Action": [
+                    "cloudwatch:PutMetricData"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "CloudWatchLogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "logs:DescribeLogStreams",
+                    "logs:DescribeLogGroups"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "S3Access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListAllMyBuckets"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Get*",
+                    "s3:List*",
+                    "s3:Put*"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "SSMReadAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:Describe*",
+                    "ssm:Get*",
+                    "ssm:List*"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "KubernetesInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "KubernetesRole"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "BaseSecurityGroup": {
+      "Description": "Base Security Group which allows Kafka-ZooKeeper-SchemaRegistry communication",
+      "Value": {
+        "Ref": "BaseSecurityGroup"
+      }
+    },
+    "KubernetesSecurityGroup": {
+      "Description": "Kafka Security Group",
+      "Value": {
+        "Ref": "KubernetesSecurityGroup"
+      }
+    },
+    "KubernetesInstanceProfile": {
+      "Description": "Instance Profile",
+      "Value": {
+        "Ref": "KubernetesInstanceProfile"
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: baldur-eks
+  region: us-east-1
+  version: "1.14"
+
+vpc:
+  subnets:
+    private:
+      us-east-1b: { id: subnet-00ecb52b }
+      us-east-1c: { id: subnet-ea91809d }
+    public:
+      us-east-1b: { id: subnet-07ecb52c}
+      us-east-1c: { id: subnet-ec91809b}
+
+nodeGroups:
+  - name: ng-stateless
+    labels: { role: stateless }
+    minSize: 2
+    maxSize: 6
+    instancesDistribution: # 50% on demand and 50% spot instances (Spot Fleet)
+        maxPrice: 0.017
+        instanceTypes: ["t3.small", "t3.medium", "t3a.small", "t3a.medium"]
+        onDemandBaseCapacity: 0
+        onDemandPercentageAboveBaseCapacity: 50
+        spotInstancePools: 3
+    privateNetworking: true
+    ssh: # use existing EC2 key
+      publicKeyName: ci-k8s
+    tags:
+      # EC2 tags required for cluster-autoscaler auto-discovery
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/baldur-eks: "owned"
+    iam:
+      withAddonPolicies:
+        albIngress: true
+        autoScaler: true
+        cloudWatch: true
+  - name: ng-stateful
+    instanceType: t3.medium
+    labels: { role: stateful }
+    minSize: 2
+    maxSize: 5
+    volumeSize: 50
+    volumeType: gp2
+    privateNetworking: true
+    availabilityZones: ["us-east-1b"] # lock this node group to one AZ for shared EBS
+    ssh:
+      publicKeyName: ci-k8s
+    tags:
+      # EC2 tags required for cluster-autoscaler auto-discovery
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/baldur-eks: "owned"
+    iam:
+      withAddonPolicies:
+        albIngress: true
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+
+cloudWatch:
+    clusterLogging:
+        # enable specific types of cluster control plane logs
+        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]

@@ -646,7 +646,7 @@ The HPA Controller queries the resource utilization against the metrics specifie
 
 Note if a container doesn't have the relevant resource request set (in our case below, the CPU utilization), then CPU utilization for the pod will not be defined and the autoscaler will not take any action for that metric.
 
-We'll update our deployment to include a resources section:
+We'll update our deployment to include a resources section. We will also comment out the *replicas: 2* as will have the HPA determine the number of required replicas:
 ```sh
 # Add resources section
 $ cat deployment-robust.yaml
@@ -658,7 +658,7 @@ spec:
   selector:
     matchLabels:
       app: baldur
-  replicas: 2
+  #replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -735,7 +735,7 @@ $ kubectl get hpa
 NAME                REFERENCE                      TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 baldur-autoscaler   Deployment/baldur-deployment   0%/50%    2         10        2          45s
 ```
-Above we see that we've created an HPA that will limit the baldur-deployment to a minimum of 2 Pods, maximum of 10, and will scale out if we hit 50% CPU usage (then <unknown> part of the TARGETS column is memory usage which we haven't specified).
+Above we see that we've created an HPA that will limit the baldur-deployment to a minimum of 2 Pods, maximum of 10, and will scale out if we hit 50% CPU usage (the <unknown> and 0% under TARGETS is the measured value for CPU usage in the metric server).
 
 With nothing happening in our application this shouldn't have changed the number of Pods that we have running:
 ```sh
@@ -780,6 +780,14 @@ baldur-deployment-7c5458465c-2j5qg   1/1     Running   0          38m
 baldur-deployment-7c5458465c-955mj   1/1     Running   0          38m
 # we've dropped back down to 2 pods
 ```
+
+#### Chosing Resource Requests
+We need to set our resource requests as close as possible to the actual utilization of these resources. If the value is too low then we'll get throttled, impacting performance. If it's too high then we'll reserve unused capacity and waste money.
+
+We can use a tool like [kube-resource-report](https://github.com/hjacobs/kube-resource-report) to determine the right values for our resource requests.
+
+#### Other Scaling Criteria
+There is also a tool named [kube-downscaler](https://github.com/hjacobs/kube-downscaler) that can scale resources in and out based on **time of day**.
 
 ### StatefulSets
 A StatefulSet is used to manage stateful applications. Like a Deployment, it manages the deployment and scaling of a set of Pods that are based on an indentical container spec, but it also *provides guarantees about the ordering and uniqueness* of these Pods. These Pods are created from the same spec but are not interchangeable: each has a persistent identifier that it maintains across any rescheduling.
@@ -979,7 +987,6 @@ We can supply our ConfigMaps with custom data for our different environments muc
 
 Below I'll deploy our tenant-splitter application to a **dev** environment and a **prod** environment and I'll use config map data to customize the application for each environment. This is a bit contrived as I'm creating a dev-config.yaml file and a prod-config.yaml file to create the different values for the environments. Our real build would be populating the data for the config.yaml file from something like *environments.yaml*.
 
-#### The ConfigMaps
 Below we'll generate the ConfigMap named baldur in our dev and prod environments:
 ```sh
 # Make the dev config map
@@ -1062,13 +1069,33 @@ baldur-tensplit   0/1     ContainerCreating   0          7s
 ```
 We now have the baldur-tensplit application running in our production and development environments.
 
-Let's ping them to make sure they are configured properly.
+Let's grab their **environment variables** to make sure they are configured properly.
 
 Development environment:
 ```sh
 $ kubectl port-forward baldur-tensplit 8080:8080 -n dev
 $ curl http://localhost:8080/tenantSplitter/internals/getenv
 ["KUBERNETES_PORT_443_TCP=tcp://172.20.0.1:443","PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","KUBERNETES_PORT_443_TCP_ADDR=172.20.0.1","KUBERNETES_PORT=tcp://172.20.0.1:443","KUBERNETES_PORT_443_TCP_PROTO=tcp","KUBERNETES_SERVICE_HOST=172.20.0.1","KUBERNETES_SERVICE_PORT=443","HOSTNAME=baldur-tensplit","LD_LIBRARY_PATH=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64:/usr/lib/jvm/java-1.8-openjdk/jre/../lib/amd64","MYMIR_DOG=mymir in leisure wear","KUBERNETES_PORT_443_TCP_PORT=443","KUBERNETES_SERVICE_PORT_HTTPS=443","BALDUR_DOG=baldur in leisure wear","HOME=/home/sassrv"]
+# or just logging in and checking the environment:
+$ kubectl exec -it -n dev baldur-tensplit /bin/bash
+bash-4.4$ env
+BALDUR_DOG=baldur in leisure wear
+HOSTNAME=baldur-tensplit
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=172.20.0.1
+MYMIR_DOG=mymir in leisure wear
+KUBERNETES_PORT=tcp://172.20.0.1:443
+PWD=/
+HOME=/home/sassrv
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP=tcp://172.20.0.1:443
+TERM=xterm
+SHLVL=1
+KUBERNETES_SERVICE_PORT=443
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+KUBERNETES_SERVICE_HOST=172.20.0.1
+_=/usr/bin/env
 ```
 We can see that
 - "MYMIR_DOG=mymir in leisure wear"
@@ -1085,4 +1112,108 @@ We can see that
 - "MYMIR_DOG=mymir in formal wear"
 - "BALDUR_DOG=baldur in formal wear"
 which is as it should be in a production environment.
-xxxx
+
+So we've deployed the exact same image, using the same yaml file to two different environments and it gets automatically configured properly for the environment that it's in.
+
+### Secrets
+ConfigMaps are great for configuration data that doesn't have to be secure but what about things like database passwords.
+Anyone with access to the Kubernetes cluster can read this data:
+```sh
+$ kubectl describe cm baldur -n dev
+Name:         baldur
+Namespace:    dev
+Data
+====
+butters_age:
+----
+12
+butters_oldest:
+----
+true
+color:
+----
+blue
+mymir:
+----
+mymir in leisure wear
+temp:
+----
+cool
+baldur:
+----
+baldur in leisure wear
+Events:  <none>
+```
+
+Let's create a secret and feed that in as an environment variable:
+```sh
+# Obviously we'll want to create the secret in a secure way so that it's not sitting in git
+$ cat dev-butters-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: butters
+type: Opaque
+data:
+  butters: YnV0dGVycyBpbiBraGFraXM=
+$ kubectl apply -f dev-butters-secret.yaml -n dev
+secret/butters created
+razing@mlb727 config (master) $ kubectl get secrets -n dev
+NAME                  TYPE                                  DATA   AGE
+butters               Opaque                                1      27s
+default-token-6wbld   kubernetes.io/service-account-token   3      3h44m
+razing@mlb727 config (master) $ kubectl describe secret butters -n dev
+Name:         butters
+Namespace:    dev
+Labels:       <none>
+Annotations:
+Type:         Opaque
+
+Data
+====
+butters:  17 bytes
+# unlike our ConfigMap we can't actually see what the value is for the butters key
+```
+Good, we've stored the secret but we can't see what the value is - it's Opaque.
+
+Now let's use the secret in our Pod:
+```sh
+$ cat baldur-pod-secret.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: baldur-tensplit
+spec:
+  containers:
+  - name: baldurpod
+    image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:mymir
+    env:
+      - name: BALDUR_DOG
+        valueFrom:
+          configMapKeyRef:
+            name: baldur
+            key: baldur
+      - name: MYMIR_DOG
+        valueFrom:
+          configMapKeyRef:
+            name: baldur
+            key: mymir
+      - name: BUTTERS_DOG
+        valueFrom:
+          secretKeyRef:
+            name: butters
+            key: butters
+$ kubectl apply -f baldur-pod-secret.yaml -n dev
+pod/baldur-tensplit created
+
+$ kubectl port-forward baldur-tensplit 8080:8080 -n dev
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+$ curl http://localhost:8080/tenantSplitter/internals/getenv
+["KUBERNETES_PORT_443_TCP=tcp://172.20.0.1:443","PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","KUBERNETES_PORT_443_TCP_ADDR=172.20.0.1","KUBERNETES_PORT=tcp://172.20.0.1:443","KUBERNETES_PORT_443_TCP_PROTO=tcp","KUBERNETES_SERVICE_HOST=172.20.0.1","KUBERNETES_SERVICE_PORT=443","HOSTNAME=baldur-tensplit","LD_LIBRARY_PATH=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64:/usr/lib/jvm/java-1.8-openjdk/jre/../lib/amd64","MYMIR_DOG=mymir in leisure wear","BUTTERS_DOG=butters in khakis","KUBERNETES_PORT_443_TCP_PORT=443","KUBERNETES_SERVICE_PORT_HTTPS=443","BALDUR_DOG=baldur in leisure wear","HOME=/home/sassrv"]
+```
+
+And there we have it:
+- "BUTTERS_DOG=butters in khakis"
+
+If we wanted to make this even more secure, we could have put an encoded form of the BUTTERS_DOG value in the secret and stored that in the container's environment variable. We could then run have the application pass it through a decoder (like our PasswordDecoder lambda function) before using it in the application.

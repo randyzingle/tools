@@ -781,7 +781,7 @@ baldur-deployment-7c5458465c-955mj   1/1     Running   0          38m
 # we've dropped back down to 2 pods
 ```
 
-#### Chosing Resource Requests
+#### Choosing Resource Requests
 We need to set our resource requests as close as possible to the actual utilization of these resources. If the value is too low then we'll get throttled, impacting performance. If it's too high then we'll reserve unused capacity and waste money.
 
 We can use a tool like [kube-resource-report](https://github.com/hjacobs/kube-resource-report) to determine the right values for our resource requests.

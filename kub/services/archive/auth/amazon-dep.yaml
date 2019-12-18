@@ -1,0 +1,24 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: amazon-deployment
+spec:
+  selector:
+    matchLabels:
+      app: amazon
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: amazon
+    spec:
+      serviceAccountName: finnr-sa
+      containers:
+      - name: amazon-ts
+        image: ubuntu #137112412989.dkr.ecr.us-east-1.amazonaws.com/amazonlinux:latest
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo $(date -u) >> /tmp/out.txt; sleep 5; done"]
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "2048Mi"

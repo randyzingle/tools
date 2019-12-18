@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: baldur-pv-claim
+  annotations:
+    #volume.beta.kubernetes.io/storage-class: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 4Gi
+  storageClassName: slow
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: baldur-rs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: baldur-tensplit
+  template:
+    metadata:
+      labels:
+        app: baldur-tensplit
+    spec:
+      initContainers:
+      - name: volume-mount-hack
+        image: busybox
+        #command: ["sh", "-c", "chown -R 200:200 /nexus"]
+        command: ["/bin/chmod","-R","a+rw", "/install/citng/service/data"]
+        volumeMounts:
+        - name: cache-volume
+          mountPath: /install/citng/service/data
+      containers:
+      - name: baldur-container
+        image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:baldur
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /install/citng/service/data
+          name: cache-volume
+      volumes:
+      - name: cache-volume
+        persistentVolumeClaim:
+          claimName: baldur-pv-claim

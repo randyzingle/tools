@@ -784,6 +784,28 @@ baldur-deployment-7c5458465c-2j5qg   1/1     Running   0          38m
 baldur-deployment-7c5458465c-955mj   1/1     Running   0          38m
 # we've dropped back down to 2 pods
 ```
+#### HPA with custom metrics
+The environment in our container:
+```sh
+"KUBERNETES_PORT_443_TCP=tcp://172.20.0.1:443",
+"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+"KUBERNETES_PORT_443_TCP_ADDR=172.20.0.1",
+"HOSTNAME=baldur-deployment-5644bc9fd5-krwx8",
+"LD_LIBRARY_PATH=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64:/usr/lib/jvm/java-1.8-openjdk/jre/../lib/amd64",
+"KUBERNETES_PORT=tcp://172.20.0.1:443",
+"KUBERNETES_PORT_443_TCP_PORT=443",
+"KUBERNETES_PORT_443_TCP_PROTO=tcp",
+"KUBERNETES_SERVICE_PORT_HTTPS=443",
+"KUBERNETES_SERVICE_HOST=172.20.0.1",
+"HOME=/home/sassrv",
+"KUBERNETES_SERVICE_PORT=443"
+```
+Our pod name is stored in the environment variable HOSTNAME.
+
+This is what gets added by kubernetes (pod was our custom field):
+```
+baldur_dog_treats_eaten{app="baldur",instance="10.240.5.20:8080",job="kubernetes-pods",kubernetes_namespace="default",kubernetes_pod_name="baldur-deployment-5644bc9fd5-n8qb7",pod="baldur-deployment",pod_template_hash="5644bc9fd5"}
+```
 
 #### Choosing Resource Requests
 We need to set our resource requests as close as possible to the actual utilization of these resources. If the value is too low then we'll get throttled, impacting performance. If it's too high then we'll reserve unused capacity and waste money.
@@ -1346,7 +1368,7 @@ VolumeBindingMode:     WaitForFirstConsumer
 Events:                <none>
 ```
 The above creates a storage class (**ebs-gp2-ext4**) that we can use to provision EBS volumes. We've configured the StorageClass with the following:
-- volumeBindingMode: WaitForFirstConsumer (volumes are not provisioned until a pod makes a persistent volume claim, allowed values Immediate, WaitForFirstConsumer)
+- volumeBindingMode: WaitForFirstConsumer (volumes are not provisioned until a pod makes a persistent volume claim, allowed values: Immediate, WaitForFirstConsumer)
 - reclaimPolicy: Delete (allowed values: Retain=retain volume when Persistent Volume Claim (PVC) is deleted, Delete=delete volume when PVC is deleted)
 - type: gp2 (EBS volume type: can be io1, gp2, sc1, st1, standard)
 - fsType: ext4 (File system type that will be formatted during volume creation: can be xfs, ext2, ext3, ext4)
@@ -1422,8 +1444,6 @@ spec:
     volumeMounts:
     - mountPath: /data
       name: data-volume
-  nodeSelector:
-    role: stateful
   volumes:
   - name: data-volume
     persistentVolumeClaim:
@@ -1441,76 +1461,6 @@ baldur-ebs-claim   Bound    pvc-ea297168-2115-11ea-866e-0af77482d1d1   4Gi      
 ```
 If we look the volume up in aws we can see that it's attached to one of our worker nodes in our baldur-eks-ng-stateful-Node group (more on this later), and is in the state: in-use.
 
-Let's check it our application. We port-forward to it, and use the UI to create a couple of new quotes:
-- Baldur is a good dog
-- Mymir is a good dog
-
-```sh
-
-$ kubectl port-forward baldur-ebs-pod 8080:8080
-Forwarding from 127.0.0.1:8080 -> 8080
-Forwarding from [::1]:8080 -> 8080
-# Use the UI to add two quotes - Baldur & Mymir
-# Grab the full list from the REST endpoint
-$ curl http://localhost:8080/tenantSplitter/files/quotes
-["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog"]
-```
-
-What happens when we delete our application?
-```sh
-razing@mlb727 mkt-template-docker (staging) $ kubectl delete pod baldur-ebs-pod
-pod "baldur-ebs-pod" deleted
-razing@mlb727 mkt-template-docker (staging) $ kubectl get pvc
-NAME               STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-baldur-ebs-claim   Bound    pvc-a1617657-21a5-11ea-8332-12900007cf77   4Gi        RWO            ebs-gp2-ext4   26m
-```
-Our PVC shows up as being bound still but if we check the aws console we see that the EBS still exists but has been detached for the EC2 worker node and is in the state: available.
-
-Let's re-create our Pod:
-```sh
-$ kubectl apply -f ebs-based-app.yaml
-pod/baldur-ebs-pod created
-$ kubectl get pods
-NAME             READY   STATUS     RESTARTS   AGE
-baldur-ebs-pod   0/1     Init:0/1   0          8s
-$ kubectl get pods
-NAME             READY   STATUS    RESTARTS   AGE
-baldur-ebs-pod   1/1     Running   0          28s
-$ kubectl port-forward baldur-ebs-pod 8080:8080
-$ curl http://localhost:8080/tenantSplitter/files/quotes
-["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog"]
-```
-We can see that we still have the two quotes that we added with the previous Pod. This is good! We can keep our data between restarts or upgrades of our Pods!
-
-Now let's delete our Pod and our PVC:
-```sh
-$ kubectl delete pod baldur-ebs-pod
-pod "baldur-ebs-pod" deleted
-$ kubectl delete pvc baldur-ebs-claim
-persistentvolumeclaim "baldur-ebs-claim" deleted
-```
-Now we look for the volume in the aws console we can see that it's gone.
-
-Let's spin everything back up:
-```sh
-$ kubectl apply -f ebs-pvc.yaml
-persistentvolumeclaim/baldur-ebs-claim created
-$ kubectl apply -f ebs-based-app.yaml
-pod/baldur-ebs-pod created
-$ kubectl get pods
-NAME             READY   STATUS    RESTARTS   AGE
-baldur-ebs-pod   1/1     Running   0          23s
-$ kubectl port-forward baldur-ebs-pod 8080:8080
-Forwarding from 127.0.0.1:8080 -> 8080
-Forwarding from [::1]:8080 -> 8080
-$ curl http://localhost:8080/tenantSplitter/files/quotes
-["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ)."]
-```
-Now we've lost our new quotes and are just have the canned data again.
-
-If we had set ReclaimPolicy: Retain in our StorageClass and deleted the PVC then the EBS volume would be retained even if the PVC claim was deleted. It would be stranded though as re-creating the PVC claim and using it in a new Pod would not remount this disk but would create and use a new EBS volume.
-
-#### Affinity
 If we describe our pod we can see the name of the volume that was created and attached (showing only relevant parts):
 ```sh
 $ kubectl describe pod baldur-ebs-pod
@@ -1580,6 +1530,74 @@ Events:
 }
 ```
 
+Let's create some data. We'll port-forward to our application, and use the UI to create a couple of new quotes:
+- Baldur is a good dog
+- Mymir is a good dog
+
+```sh
+$ kubectl port-forward baldur-ebs-pod 8080:8080
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+# Use the UI to add two quotes - Baldur & Mymir
+# Grab the full list from the REST endpoint
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog"]
+```
+
+What happens when we delete our application?
+```sh
+razing@mlb727 mkt-template-docker (staging) $ kubectl delete pod baldur-ebs-pod
+pod "baldur-ebs-pod" deleted
+razing@mlb727 mkt-template-docker (staging) $ kubectl get pvc
+NAME               STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+baldur-ebs-claim   Bound    pvc-a1617657-21a5-11ea-8332-12900007cf77   4Gi        RWO            ebs-gp2-ext4   26m
+```
+Our PVC shows up as being bound still but if we check the aws console we see that the EBS still exists but has been detached for the EC2 worker node and is in the state: available.
+
+Let's re-create our Pod:
+```sh
+$ kubectl apply -f ebs-based-app.yaml
+pod/baldur-ebs-pod created
+$ kubectl get pods
+NAME             READY   STATUS     RESTARTS   AGE
+baldur-ebs-pod   0/1     Init:0/1   0          8s
+$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+baldur-ebs-pod   1/1     Running   0          28s
+$ kubectl port-forward baldur-ebs-pod 8080:8080
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog"]
+```
+We can see that we still have the two quotes that we added with the previous Pod. This is good! We can keep our data between restarts or upgrades of our Pods!
+
+Now let's delete our Pod and our PVC:
+```sh
+$ kubectl delete pod baldur-ebs-pod
+pod "baldur-ebs-pod" deleted
+$ kubectl delete pvc baldur-ebs-claim
+persistentvolumeclaim "baldur-ebs-claim" deleted
+```
+Now we look for the volume in the aws console we can see that it's gone.
+
+Let's spin everything back up:
+```sh
+$ kubectl apply -f ebs-pvc.yaml
+persistentvolumeclaim/baldur-ebs-claim created
+$ kubectl apply -f ebs-based-app.yaml
+pod/baldur-ebs-pod created
+$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+baldur-ebs-pod   1/1     Running   0          23s
+$ kubectl port-forward baldur-ebs-pod 8080:8080
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ)."]
+```
+Now we've lost our new quotes and are just have the canned data again.
+
+If we had set ReclaimPolicy: Retain in our StorageClass and deleted the PVC then the EBS volume would be retained even if the PVC claim was deleted. It would be stranded though as re-creating the PVC claim and using it in a new Pod would not remount this disk but would create and use a new EBS volume.
+
 #### Selecting the NodeGroup for Pod creation and Volume attachment
 If you scroll up a bit, you'll see that our EBS volume was attached to the node **ip-10-240-11-193.ec2.internal**.
 
@@ -1601,3 +1619,338 @@ ip-10-240-26-193.ec2.internal   Ready    <none>   3h44m   v1.14.6-eks-5047ed
 ip-10-240-30-181.ec2.internal   Ready    <none>   3h43m   v1.14.6-eks-5047ed
 ```
 It looks like our Pod was created on one of the stateful nodes which is good but was just lucky.
+
+We need to force kubernetes to deploy this application to one of the nodes in our group that's labelled stateful because we want long-term stability for it.
+We can do this by using a **nodeSelector** in our deployment description.
+
+We have the label *role=stateful* on all of our non-spot instances. Let's ensure that our application is deployed to on of those nodes. We can do this by adding the nodeSelector: role: stateful section to our deployment. Once we do this all Pods created with this manifest will be deployed to one of the servers in the stateful group.
+The modified deployment file is shown below:
+
+```sh
+$ cat ebs-stateful-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: baldur-ebs-pod
+spec:
+  initContainers:
+  - name: volume-permissions-hack
+    image: busybox
+    command: ["/bin/chmod","-R","a+rw", "/data"]
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data
+  containers:
+  - name: baldur-ebs-app
+    image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:mymir
+    imagePullPolicy: Always
+    volumeMounts:
+    - mountPath: /data
+      name: data-volume
+  nodeSelector:
+    role: stateful
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: baldur-ebs-claim
+```
+
+### EFS Based Storage
+
+Our Kubernetes cluster has the Amazon EFS CSI Driver installed. This lets us attach an EBS volume to our Pod. If you have a microservice that scales and need persistent disk storage that's shared across the scaled instances then this is what you should be using. In fact you should think about whether or not your data belongs in RDS/Dynamo/Redis first, and then move to EFS if you really need a file system.
+
+This works a lot like EBS usage did above, but you'll be hooking up to a shared EFS-based disk rather than creating an EBS volume. This means:
+- you can attach the disk to multiple Pods at once
+- the Pods can be spun up in any availability zone (if your EFS disk is provisioned to properly span all of your subnets)
+- you'll be **sharing the disk with other microservice** everyone will have to follow some root path convention.
+
+#### Administrator Details
+We can't just dynamically provision EFS like we did with the EBS volumes:
+- The EFS resource needs to be pre-provisioned by an admin - the disk, security group, and mount points on the VPC subnets your k8s cluster runs in
+- The EFS disk only has the root (/) directory and is only writable by the root user. The admin will have to mount the disk on a EC2 instance and *sudo chmod 777 /mntpoint* the disk for sassrv to use it. Permissions are by numeric ID so setting up sudo chown sassrv:sassrv /mntpoint won't work.
+- more than one application can grab this disk - we'll have to use some convention like writing to **/{island}/{project}/data** to avoid messing up other application's data.
+- We have to create a PersistentVolume pointed at the EFS disk since it's not automatically provisioned.
+
+So up front the kubernetes admin will create the EFS disk in aws, and then create the proper StorageClass and PersistentVolume:
+```sh
+# Storage Class
+$ cat efs-storageclass.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+reclaimPolicy: Retain
+$ kubectl apply -f efs-storageclass.yaml
+storageclass.storage.k8s.io/efs-sc created
+$ kubectl get sc
+NAME            PROVISIONER             AGE
+ebs-gp2-ext4    ebs.csi.aws.com         143m
+efs-sc          efs.csi.aws.com         12s
+
+# PersistentVolume
+$ cat efs-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-9fc07b1e
+$ kubectl apply -f efs-pv.yaml
+persistentvolume/efs-pv created
+$ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                                STORAGECLASS   REASON   AGE
+efs-pv                                     5Gi        RWX            Retain           Available                                        efs-sc                  42s
+```
+
+#### Application Developer Details
+As with EBS we need to create a PersistentVolumeClaim using our provisioned storage class (efs-sc), and then we need to use this PVC in our application deployment manifest:
+
+```sh
+# Create the PVC
+$ cat efs-pvclaim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: efs-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi
+$ kubectl apply -f efs-pvc.yaml
+persistentvolumeclaim/efs-claim created
+$ kubectl get pvc
+NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+efs-claim   Bound    efs-pv   5Gi        RWX            efs-sc         5s
+
+# Use the PVC in our application
+$ cat efs-based-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: baldur-efs-pod
+spec:
+  initContainers:
+  containers:
+  - name: baldur-efs-app
+    image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:mymir
+    imagePullPolicy: Always
+    volumeMounts:
+    - mountPath: /data
+      name: data-volume
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: efs-claim
+$ kubectl apply -f efs-based-app.yaml
+pod/baldur-efs-pod created
+$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+baldur-efs-pod   1/1     Running   0          30s
+$ kubectl port-forward baldur-efs-pod 8080:8080
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+```
+
+Once again we'll look at our quotes which get stored on disk. We can see that we start with our pre-canned quotes, and that if we add two new quotes they get persisted to disk:
+```sh
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ)."]
+# Use the UI to add a Baldur quote and a Mymir quote
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog"]
+```
+Let's jump into our container and see what the disk looks like:
+```sh
+$ kubectl exec -it baldur-efs-pod /bin/bash
+bash-4.4$ df -h
+Filesystem                Size      Used Available Use% Mounted on
+overlay                  50.0G      2.5G     47.5G   5% /
+tmpfs                    64.0M         0     64.0M   0% /dev
+tmpfs                     1.9G         0      1.9G   0% /sys/fs/cgroup
+fs-9fc07b1e.efs.us-east-1.amazonaws.com:/
+                          8.0E         0      8.0E   0% /data
+```
+The formatting is a bit wonky but we can see our mountpoint /data attached to an 8GB disk.
+
+Let's spin up a simple linux application that echos the date to a file on our EFS disk:
+
+```sh
+$ cat busybox-efs.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo $(date -u) >> /data/date.txt; sleep 5; done"]
+    volumeMounts:
+    - name: persistent-storage
+      mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: efs-claim
+$ kubectl apply -f busybox-efs.yaml
+pod/busybox created
+$ kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+baldur-efs-pod   1/1     Running   0          40m
+busybox          1/1     Running   0          4s
+
+# Let's jump onto the busybox
+$ kubectl exec -it busybox /bin/sh
+/ # df -h
+Filesystem                Size      Used Available Use% Mounted on
+overlay                  50.0G      2.5G     47.5G   5% /
+tmpfs                    64.0M         0     64.0M   0% /dev
+tmpfs                     1.9G         0      1.9G   0% /sys/fs/cgroup
+fs-9fc07b1e.efs.us-east-1.amazonaws.com:/
+                          8.0E         0      8.0E   0% /data
+
+# Our busybox app should be writing data to /data/date.txt
+/data # ls /data
+date.txt    mkt-devops
+/data # cat /data/date.txt
+Wed Dec 18 20:21:05 UTC 2019
+Wed Dec 18 20:21:11 UTC 2019
+Wed Dec 18 20:21:16 UTC 2019
+Wed Dec 18 20:21:21 UTC 2019
+Wed Dec 18 20:21:26 UTC 2019
+Wed Dec 18 20:21:31 UTC 2019
+Wed Dec 18 20:21:36 UTC 2019
+Wed Dec 18 20:21:41 UTC 2019
+Wed Dec 18 20:21:46 UTC 2019
+Wed Dec 18 20:21:51 UTC 2019
+Wed Dec 18 20:21:56 UTC 2019
+
+# And we can see that this is the same disk that our baldur-efs-pod is using
+/ # cat /data/mkt-devops/mkt-tenant-splitter/quotes/quotes.txt
+It was the best of times it was the worst of times.
+Life is never fair, and perhaps it is a good thing for most of us that it is not.
+You cant always get what you want (MJ).
+Baldur is a good dog
+Mymir is a good dog
+```
+This is why we need to agree on a convention for the base path for our application data. It would be pretty easy for one application to over-write another application's data if we don't.
+
+We could spin up a new EFS disk for each application but that would be much more cumbersome and harder to maintain.
+
+If we're using a common EFS disk we should:
+- standardize on a root mount point like /data
+- write to a path that includes our island and project name: /data/{island-name}/{project-name}/
+
+Now we'll spin up a second instance of our badlur-efs-pod and call it baldur-efs-pod1:
+```sh
+# Create the second instance
+$ cat efs-based-app1.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: baldur-efs-pod1
+spec:
+  initContainers:
+  containers:
+  - name: baldur-efs-app1
+    image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:mymir
+    imagePullPolicy: Always
+    volumeMounts:
+    - mountPath: /data
+      name: data-volume
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: efs-claim
+$ kubectl apply -f efs-based-app1.yaml
+pod/baldur-efs-pod1 created
+# We can see below that we've spun up the new Pod on a different EC2 instance (NODE) than the first Pod
+$ kubectl get pods -o wide
+NAME              READY   STATUS    RESTARTS   AGE     IP              NODE                            NOMINATED NODE   READINESS GATES
+baldur-efs-pod    1/1     Running   0          48m     10.240.8.162    ip-10-240-12-68.ec2.internal    <none>           <none>
+baldur-efs-pod1   1/1     Running   0          83s     10.240.11.207   ip-10-240-11-113.ec2.internal   <none>           <none>
+busybox           1/1     Running   0          8m53s   10.240.8.32     ip-10-240-15-26.ec2.internal    <none>           <none>
+
+# Check out the quote data
+razing@mlb727 storage (master) $ kubectl port-forward baldur-efs-pod1 8080:8080
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+# We'll use the UI to store a quote about Butters
+# Now lets check or quote endpoint:
+$ curl http://localhost:8080/tenantSplitter/files/quotes
+["It was the best of times it was the worst of times.","Life is never fair, and perhaps it is a good thing for most of us that it is not.","You can't always get what you want (MJ).","Baldur is a good dog","Mymir is a good dog","Butters is a good dog"]
+# Great we have the Baldur and Mymir quotes that the baldur-efs-pod created and the new Butters quote that the baldur-efs-pod1 created
+```
+Looks good, our *manually* autoscaled group is sharing the same disk and data - all instances will have the same view of the application's shared data.
+
+#### Fun with EFS
+When we logged into our containers we saw that the EFS disk was mounted as an 8GB file system at the /data mount point. What happens if we dump a huge file here that requires more than 8GB of space?
+
+Let's create a 10GB file:
+
+```sh
+$ curl http://localhost:8080/tenantSplitter/files/makebigfile?size=10
+razing@mlb727 storage (master) $ kubectl exec -it baldur-efs-pod /bin/bash
+bash-4.4$ df -h
+Filesystem                Size      Used Available Use% Mounted on
+overlay                  50.0G      2.6G     47.4G   5% /
+tmpfs                    64.0M         0     64.0M   0% /dev
+tmpfs                     1.9G         0      1.9G   0% /sys/fs/cgroup
+fs-9fc07b1e.efs.us-east-1.amazonaws.com:/
+                          8.0E         0      8.0E   0% /data
+# Ok its actually an 8.0E disk size not 8.0GB (E not GB)
+# Did we manage to create our 10GB file?
+bash-4.4$ cd /data/mkt-devops/mkt-tenant-splitter/quotes/
+bash-4.4$ ls -hl
+total 10485764
+-rw-r--r--    1 sassrv   sas        10.0G Dec 18 21:46 bigfile.txt
+-rw-r--r--    1 sassrv   sas          245 Dec 18 21:10 quotes.txt
+# E=Elastic! The EFS disk can grow elastically to petabyte-scale
+```
+This is why we just need one EFS volume for all of our applications. It makes setup and maintenance much easier and E=Elastic. The EFS disk can grow elastically to petabyte-scale and is spread across multiple storage servers enabling parallel access. We will never run out of room!
+
+## Metrics
+We've installed a Metric server in the kubernetes cluster. It gathers and stores a variety of cluster metrics. You can hit it at the control plane endpoint: https://DF08F33D88552F7657A214DDEFBCB8EE.gr7.us-east-1.eks.amazonaws.com/metrics (if you have the cluster's cert). Or you can hit it with kubectl:
+
+```sh
+razing@mlb727 storage (master) $ kubectl get --raw /metrics > metrics.txt
+razing@mlb727 storage (master) $ wc metrics.txt
+   14057   32216 2479300 metrics.txt
+razing@mlb727 storage (master) $ tail -5 metrics.txt
+workqueue_work_duration_seconds_bucket{name="crd_naming_condition_controller",le="1"} 6608
+workqueue_work_duration_seconds_bucket{name="crd_naming_condition_controller",le="10"} 6608
+workqueue_work_duration_seconds_bucket{name="crd_naming_condition_controller",le="+Inf"} 6608
+workqueue_work_duration_seconds_sum{name="crd_naming_condition_controller"} 0.08529290899999978
+workqueue_work_duration_seconds_count{name="crd_naming_condition_controller"} 6608
+```
+So in a fairly unused cluster we're gathering 14K+ metrics. This is a snapshot in time - we're usually also interested in trends, historical spikes, temporary outages, etc. Fortunately the /metric endpoint is scraped and the data is stored in the time-series database Prometheus. The Prometheus data can then be queried and graphed directly or fed into Grafana dashboards.
+
+### Prometheus and Grafana
+
+Service stuff:
+https://kubernetes.io/docs/concepts/services-networking/service/
+you can create a service without a Pod selector and then create the endpoint for the service manually -> use this to point the Kubernetes service name to an external IP to cross the Kubernetes / EC2 boundary!
+
+
+We can get to our Prometheus and Grafana servers directly as follows (in our official cluster we'll front these with ALBs and DNS names):
+
+```sh
+# Prometheus
+$ kubectl -n prometheus port-forward deployment/prometheus-server 9090
+Forwarding from 127.0.0.1:9090 -> 9090
+Forwarding from [::1]:9090 -> 9090
+# Grafana

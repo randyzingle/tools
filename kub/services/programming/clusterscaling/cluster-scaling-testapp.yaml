@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: baldur-deployment
+spec:
+  selector:
+    matchLabels:
+      app: baldur
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: baldur
+    spec:
+        containers:
+        - name: baldur-ts
+          image: 952478859445.dkr.ecr.us-east-1.amazonaws.com/mkt-devops/mkt-tenant-splitter:baldur
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+        nodeSelector:
+          target: stateless

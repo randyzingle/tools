@@ -17,6 +17,8 @@ spec:
     volumeMounts:
     - mountPath: /data
       name: data-volume
+  nodeSelector:
+    role: stateful
   volumes:
   - name: data-volume
     persistentVolumeClaim:

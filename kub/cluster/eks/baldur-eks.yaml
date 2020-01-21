@@ -2,7 +2,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: baldur-eks
+  name: mymir-eks
   region: us-east-1
   version: "1.14"
 
@@ -17,50 +17,77 @@ vpc:
 
 nodeGroups:
   - name: ng-stateless
-    labels: { role: stateless }
+    labels: { target: stateless }
     minSize: 2
     maxSize: 6
-    instancesDistribution: # 50% on demand and 50% spot instances (Spot Fleet)
-        maxPrice: 0.017
+    instancesDistribution: # 25% on demand and 75% spot instances (Spot Fleet)
+        maxPrice: 0.015
         instanceTypes: ["t3.small", "t3.medium", "t3a.small", "t3a.medium"]
         onDemandBaseCapacity: 0
-        onDemandPercentageAboveBaseCapacity: 50
-        spotInstancePools: 3
+        onDemandPercentageAboveBaseCapacity: 25
+        spotInstancePools: 4
     privateNetworking: true
     ssh: # use existing EC2 key
       publicKeyName: ci-k8s
     tags:
       # EC2 tags required for cluster-autoscaler auto-discovery
       k8s.io/cluster-autoscaler/enabled: "true"
-      k8s.io/cluster-autoscaler/baldur-eks: "owned"
+      k8s.io/cluster-autoscaler/mymir-eks: "owned"
     iam:
       withAddonPolicies:
         albIngress: true
         autoScaler: true
         cloudWatch: true
+
+managedNodeGroups:
   - name: ng-stateful
     instanceType: t3.medium
-    labels: { role: stateful }
+    labels: { target: stateful }
     minSize: 2
     maxSize: 5
     volumeSize: 50
-    volumeType: gp2
-    privateNetworking: true
     availabilityZones: ["us-east-1b"] # lock this node group to one AZ for shared EBS
     ssh:
       publicKeyName: ci-k8s
-    tags:
+    #tags:
       # EC2 tags required for cluster-autoscaler auto-discovery
-      k8s.io/cluster-autoscaler/enabled: "true"
-      k8s.io/cluster-autoscaler/baldur-eks: "owned"
+      #k8s.io/cluster-autoscaler/enabled: "true"
+      #k8s.io/cluster-autoscaler/mymir-eks: "owned"
     iam:
       withAddonPolicies:
         albIngress: true
         autoScaler: true
         cloudWatch: true
         ebs: true
+        efs: true
 
-cloudWatch:
-    clusterLogging:
+fargateProfiles:
+  - name: fp-dev
+    selectors:
+      # All workloads in the "dev" Kubernetes namespace matching the following
+      # label selectors will be scheduled onto Fargate:
+      - namespace: dev
+        labels: { target: fargate }
+  - name: fp-prod
+    selectors:
+      # All workloads in the "dev" Kubernetes namespace matching the following
+      # label selectors will be scheduled onto Fargate:
+      - namespace: prod
+        labels: { target: fargate }
+  - name: fp-tst
+    selectors:
+      # All workloads in the "dev" Kubernetes namespace matching the following
+      # label selectors will be scheduled onto Fargate:
+      - namespace: tst
+        labels: { target: fargate }
+  - name: fp-eurc
+    selectors:
+      # All workloads in the "dev" Kubernetes namespace matching the following
+      # label selectors will be scheduled onto Fargate:
+      - namespace: eurc
+        labels: { target: fargate }
+
+#cloudWatch:
+    #clusterLogging:
         # enable specific types of cluster control plane logs
-        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+        #enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]

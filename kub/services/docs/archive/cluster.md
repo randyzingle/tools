@@ -262,7 +262,7 @@ We can use our new driver to mount the EFS volume on our pods with a couple of c
 * more than one application can grab this disk - we'll have to use some convention like writing to **/{island}/{project}/data** to avoid potentially messing up other application's data.
 * we also need to think about how we declare the mount point or we may end up writing our data to somewhere we don't expect as I'll show below.
 
-So as will the EBS volume we need to create a PersistentVolumeClaim and a StorageClass, but we also have to create a PersistentVolume pointed at the EFS disk as it's not automatically provisioned:
+So as with the EBS volume we need to create a PersistentVolumeClaim and a StorageClass, but we also have to create a PersistentVolume pointed at the EFS disk as it's not automatically provisioned:
 
 ```sh
 $ cat efs-pv.yaml

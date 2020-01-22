@@ -906,12 +906,19 @@ The metrics supplied at the */tenantSplitter/prometheus/metrics* endpoint, must 
 
 ### Scaling on custom metrics: Prometheus Adapter
 
+Now we have our custom metrics being pulled from our Pods and stored in Prometheus. We need to make these available at a metrics endpoint that the HPA hits so that we can scale based on their values. We can use the prometheus-adapter to pull custom metrics from Prometheus and expose them at the endpoint */apis/custom.metrics.k8s.io/v1beta1*, which is watched by the HPA.
+
+#### Installing the prometheus-adapter
 we need to install the prometheus-adapter chart and supply it:
 - prometheus url
 - prometheus port
 - list of custom rules (which metrics to pull from prometheus and expose at /apis/custom.metrics.k8s.io/v1beta1)
 
-Prometheus server URL (from within the cluster): bash-4.4$ curl http://prometheus-server.prometheus.svc.cluster.local
+The Prometheus server URL, from within the cluster is it's simple service DNS name. We can check it out by logging into one of our containers and hitting it with curl:
+
+bash-4.4$ curl http://prometheus-server.prometheus.svc.cluster.local
+
+Run the Helm chart to install the adapter.
 
 ```sh
 $ helm install prometheus-adaptor stable/prometheus-adapter \
@@ -925,7 +932,103 @@ REVISION: 1
 TEST SUITE: None
 NOTES:
 prometheus-adaptor-prometheus-adapter has been deployed.
-In a few minutes you should be able to list metrics using the following command(s):
 
-  kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1 | jq
+# In a few minutes you should be able to list custom metrics using the following command(s):
+$ kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1 | jq
+```
+
+When you run the above command you'll notice (if you dig through the morass of data), that only a subset of the Prometheus metrics have been pushed to the endpoint - a subset that doesn't include our custom metrics. We need to change the configuration of the prometheus-adaptor so that it includes our metrics. We do this by changing it's config map, where the metric selection rules are stored:
+
+```sh
+$ kubectl -n prometheus get configmaps
+NAME                                    DATA   AGE
+prometheus-adaptor-prometheus-adapter   1      4d18h
+prometheus-alertmanager                 1      6d1h
+prometheus-server                       5      6d1h
+```
+The nicely named prometheus-adaptor-prometheus-adaptor config map is what we're looking for. If we look at the details we see the metric selection rules:
+
+```
+$ kubectl -n prometheus describe configmap prometheus-adaptor-prometheus-adapter
+Name:         prometheus-adaptor-prometheus-adapter
+Namespace:    prometheus
+Labels:       app=prometheus-adapter
+              chart=prometheus-adapter-1.4.0
+              heritage=Helm
+              release=prometheus-adaptor
+Annotations:  <none>
+
+Data
+====
+config.yaml:
+----
+rules:
+- seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
+  seriesFilters: []
+  resources:
+    overrides:
+      namespace:
+        resource: namespace
+      pod_name:
+        resource: pod
+  name:
+    matches: ^container_(.*)_seconds_total$
+    as: ""
+  metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container_name!="POD"}[5m]))
+    by (<<.GroupBy>>)
+- seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
+  seriesFilters:
+  - isNot: ^container_.*_seconds_total$
+  resources:
+    overrides:
+      namespace:
+        resource: namespace
+      pod_name:
+        resource: pod
+  name:
+    matches: ^container_(.*)_total$
+    as: ""
+  metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container_name!="POD"}[5m]))
+    by (<<.GroupBy>>)
+- seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
+  seriesFilters:
+  - isNot: ^container_.*_total$
+  resources:
+    overrides:
+      namespace:
+        resource: namespace
+      pod_name:
+        resource: pod
+  name:
+    matches: ^container_(.*)$
+    as: ""
+  metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>,container_name!="POD"}) by (<<.GroupBy>>)
+- seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  seriesFilters:
+  - isNot: .*_total$
+  resources:
+    template: <<.Resource>>
+  name:
+    matches: ""
+    as: ""
+  metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+- seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  seriesFilters:
+  - isNot: .*_seconds_total
+  resources:
+    template: <<.Resource>>
+  name:
+    matches: ^(.*)_total$
+    as: ""
+  metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)
+- seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+  seriesFilters: []
+  resources:
+    template: <<.Resource>>
+  name:
+    matches: ^(.*)_seconds_total$
+    as: ""
+  metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)
+
+Events:  <none>
 ```

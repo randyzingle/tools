@@ -2,9 +2,9 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: mymir-eks
+  name: baldur
   region: us-east-1
-  version: "1.14"
+  version: "1.15"
 
 vpc:
   subnets:
@@ -32,7 +32,7 @@ nodeGroups:
     tags:
       # EC2 tags required for cluster-autoscaler auto-discovery
       k8s.io/cluster-autoscaler/enabled: "true"
-      k8s.io/cluster-autoscaler/mymir-eks: "owned"
+      k8s.io/cluster-autoscaler/baldur: "owned"
     iam:
       withAddonPolicies:
         albIngress: true
@@ -52,7 +52,7 @@ managedNodeGroups:
     #tags:
       # EC2 tags required for cluster-autoscaler auto-discovery
       #k8s.io/cluster-autoscaler/enabled: "true"
-      #k8s.io/cluster-autoscaler/mymir-eks: "owned"
+      #k8s.io/cluster-autoscaler/baldur: "owned"
     iam:
       withAddonPolicies:
         albIngress: true

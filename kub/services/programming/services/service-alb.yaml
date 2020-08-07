@@ -14,3 +14,7 @@ spec:
   selector:
     app: baldur
   type: LoadBalancer
+  loadBalancerSourceRanges:
+  - "10.0.0.0/8"
+  - "10.240.0.0/12"
+  - "172.16.0.0/12"
